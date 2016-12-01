@@ -1,0 +1,64 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var width = 0.0;
+var height = 0.0;
+var cellWidth = 0.0;
+var cellHeight = 0.0;
+var halfHeight = 0.0;
+var halfWidth = 0.0;
+
+function setup() 
+{
+  width = 240.0;
+  height = 240.0;
+  cellWidth = 20.0;
+  cellHeight = 20.0;
+  halfHeight = cellHeight * 0.5;
+  halfWidth = cellWidth * 0.5;
+  numCols = floor(width/cellWidth);
+  numRows = floor(height/cellHeight);
+
+  createCanvas(width, height);
+  p5.disableFriendlyErrors = true;
+}
+
+function draw() 
+{
+  var topx = -halfWidth;
+  var topy =  halfHeight;
+  var bottomx =  halfWidth;
+  var bottomy = -halfHeight;
+  background(127);
+  stroke(0);
+
+  for (var i = 0; i < numRows; i++) 
+  {
+     var centery = i*cellHeight + halfHeight;
+     for (var j = 0; j < numCols; j++)
+     {
+        var centerx = j*cellWidth + cellWidth * 0.5;
+        var angle = 0.0;
+        if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height)
+        {
+           var dirx = mouseX - centerx;
+           var diry = mouseY - centery;
+           angle = atan2(diry, dirx) + HALF_PI * 0.5;
+        }
+        var cAngle = cos(angle);
+        var sAngle = sin(angle);
+        var rtopx = cAngle * topx - sAngle * topy + centerx;
+        var rtopy = sAngle * topx + cAngle * topy + centery;
+        var rbotx = cAngle * bottomx - sAngle * bottomy + centerx;
+        var rboty = sAngle * bottomx + cAngle * bottomy + centery;
+        line(rtopx,rtopy,rbotx,rboty);
+     }
+  }
+}
+</script>
+<body>
+</body>
+</html>
+
+
