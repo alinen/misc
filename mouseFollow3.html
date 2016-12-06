@@ -40,7 +40,7 @@ function draw()
   background(0,50,0);
   stroke(0,255,0);
 
-  for (var i = 0; i < height; i++) 
+  for (var i = 0; i < numRows; i++) 
   {
      var centery = i*cellHeight + halfHeight;
      for (var j = 0; j < numCols; j++)
@@ -53,12 +53,12 @@ function draw()
         var dist = sqrt(dirx*dirx + diry*diry);
         if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height && dist < threshold)
         {
-           angle = atan2(diry, dirx);
+           angle = atan2(diry, dirx)  + HALF_PI * 0.5;
            angles[idx] = angle;
         }
         else
         {
-           // fix: framerate dependent
+           //// fix: framerate dependent
            var rate = PI * 0.05;
            if (angles[idx] > 0) angle = max(0, angles[idx] - rate); 
            else angle = min(0, angles[idx] + rate);
