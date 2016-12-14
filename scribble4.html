@@ -1,0 +1,156 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var pallet = [];
+var width = 0.0;
+var height = 0.0;
+var curves = [];
+var angleTarget = 0;
+
+class Curve
+{
+   constructor()
+   {
+      this.points = [];
+      this.color = Object.create(random(pallet));
+      this.strokeWeight = 1;
+   }
+
+   generate(numPoints, strokeWeight, maxX, maxY)
+   {
+      this.strokeWeight = strokeWeight;
+      for (var i = 0; i < numPoints; i++)
+      {
+         var x = random(0, maxX);
+         var y = random(0, maxY);
+         this.points.push({x: x, y: y});
+      }
+   }
+
+   draw()
+   {
+      stroke(this.color.r, this.color.g, this.color.b, this.color.a);
+      strokeWeight(this.strokeWeight);
+      for (var i = 0; i < this.points.length-1; i++)
+      {
+         var previ = max(0,i-1);
+         var nexti = min(this.points.length-1,i+1);
+         var p0 = this.points[previ];
+         var p1 = this.points[i];
+         var p2 = this.points[i+1];
+         var p3 = this.points[nexti];
+         var c1 = {x: p1.x - p0.x, y: p1.y - p0.y};
+         var c2 =  {x: p3.x - p2.x, y: p3.y - p2.y};
+         curve(c1.x, c1.y, p1.x, p1.y, p2.x, p2.y, c2.x, c2.y);
+      }
+   }
+}
+
+class AnimatedCurve
+{
+   constructor(curve)
+   {
+      this.angle = random(0, TWO_PI);
+      this.current = 0;
+      this.next = int(random(0, curve.legnth));
+      this.curve = curve;
+   }
+
+   draw()
+   {
+      var t = (Math.sin(this.angle) + 1.0)*0.5;
+      this.angle += 0.05;
+      if (this.angle > angleTarget)
+      {
+         angleTarget += TWO_PI;
+         this.next = this.next + 1;
+         if (this.next === this.curve.length) this.next = 1;
+         //console.log("test "+this.next+" "+t);
+      }
+
+      var cblend = blendCurves(this.curve[0], this.curve[next], t);
+      cblend.draw();
+   }
+}
+
+function setup() 
+{
+  angle = 0;
+  current = 0;
+  next = 1;
+  angleTarget = 3*HALF_PI;
+  width = 720.0;
+  height = 240.0;
+
+  pallet.push({r: 255, g: 65, b: 172, a: 200}); //pink
+  pallet.push({r: 127, g: 73, b: 133, a: 200}); // pink,purple
+  pallet.push({r: 2, g: 196, b: 73, a: 200}); // green
+  pallet.push({r: 38, g: 82, b: 145, a: 200}); // blue
+  pallet.push({r: 0, g: 60, b: 145, a: 200}); // darker blue
+
+  var numCurves = 5;
+  var curvesPerCurve = 5;
+  var minPointsPerCurve = 3;
+  var maxPointsPerCurve = 7;
+  var minStrokeWeight = 2;
+  var maxStrokeWeight = 12;
+  var numPoints = 10;
+  for (var i = 0; i < numCurves; i++)
+  {
+      var strokeWeight = random(minStrokeWeight, maxStrokeWeight);
+
+      var cc = [];
+      for (var j = 0; j < curvesPerCurve; j++)
+      {
+         var c = new Curve();
+         c.generate(numPoints, strokeWeight, width, height);
+         cc.push(c);
+      }
+      var animatedCurve = new AnimatedCurve(cc);
+      curves.push(animatedCurve);
+  }
+
+  createCanvas(width, height);
+  p5.disableFriendlyErrors = true;
+}
+
+function blendCurves(c1, c2, t)
+{
+   var c = new Curve();
+
+   c.color.r = c2.color.r * t + c1.color.r * (1.0-t);
+   c.color.g = c2.color.g * t + c1.color.g * (1.0-t);
+   c.color.b = c2.color.b * t + c1.color.b * (1.0-t);
+   c.color.a = c2.color.a * t + c1.color.a * (1.0-t);
+   c.strokeWeight = c2.strokeWeight * t + c1.strokeWeight * (1.0-t);
+
+   c.points = [];
+   for (var i = 0; i < c1.points.length; i++)
+   {
+      var p1 = c1.points[i];
+      var p2 = c2.points[i];
+      var p = {x: p2.x * t + p1.x * (1.0-t), 
+               y: p2.y * t + p1.y * (1.0-t)};
+      c.points.push(p);
+   }
+
+   return c;
+}
+
+function draw() 
+{
+  background(0);
+  noFill();
+
+  for (var i = 0; i < curves.length; i++)
+  {
+    curves[i].draw();
+  }
+}
+</script>
+<body>
+</body>
+</html>
+
+

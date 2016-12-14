@@ -1,0 +1,82 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var width = 0.0;
+var height = 0.0;
+var points = [];
+var threshold = 5;
+var rainbow = [
+ {r: 255, g:   0, b:   0},
+ {r: 255, g: 128, b:  64},
+ {r: 255, g: 255, b:   0},
+ {r:   0, g: 128, b:   0},
+ {r:   0, g:   0, b: 160},
+ {r: 128, g:   0, b: 128},
+ {r: 255, g: 128, b:   0},
+ {r: 255, g:   0, b:   0}
+];
+var lineWidth = 10;
+
+function setup() 
+{
+  width = 720.0;
+  height = 240.0;
+  createCanvas(width, height);
+  p5.disableFriendlyErrors = true;
+
+  background(0,162,232);
+}
+
+function computeDistance(p1, p2)
+{
+   var d = Math.sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
+   return d;
+}
+
+function drawLine(id)
+{
+   if (points.length === 0) return;
+
+   var c = rainbow[id];
+   stroke(c.r, c.g, c.b);
+   strokeWeight(lineWidth * id);
+   for (var i = 0; i < points.length-1; i++)
+   {
+      line(points[i].x, points[i].y, points[i+1].x, points[i+1].y);
+   }
+}
+
+function draw() 
+{
+  if (mouseIsPressed && mouseButton === LEFT)
+  {
+     var newPoint = {x:mouseX, y:mouseY};
+     if (points.length > 0)
+     {
+        var lastPoint = points[points.length-1];
+        var d = computeDistance(lastPoint, newPoint);
+        if (d > threshold)
+        {
+           points.push(newPoint);
+        }
+     }
+     else
+     {
+        points.push(newPoint);
+     }
+  }
+
+  for (var c = rainbow.length-1; c >= 0; c--)
+  {
+     drawLine(c);
+  }
+
+  
+}
+</script>
+<body>
+</body>
+</html>
+
+
