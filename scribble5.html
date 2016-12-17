@@ -1,0 +1,102 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var pallet = [];
+var poissonBlur = [];
+var gaussianBlur = [];
+var width = 0.0;
+var height = 0.0;
+var curves = [];
+
+class Curve
+{
+   constructor()
+   {
+      this.points = [];
+      this.color = random(pallet);
+      this.strokeWeight = 1;
+   }
+
+   generate(numPoints, strokeWeight, maxX, maxY)
+   {
+      this.strokeWeight = strokeWeight;
+      for (var i = 0; i < numPoints; i++)
+      {
+         var x = random(0, maxX);
+         var y = random(0, maxY);
+         this.points.push({x: x, y: y});
+      }
+   }
+
+   drawCurve(lw, alpha)
+   {
+      blendMode(ADD);
+      curveTightness(5);
+      stroke(this.color.r, this.color.g, this.color.b, alpha);
+      strokeWeight(lw);
+
+      beginShape();
+      for (var i = 0; i < this.points.length; i++)
+      {
+         curveVertex(this.points[i].x, this.points[i].y);
+      }
+      endShape();
+   }
+
+   draw()
+   {
+      this.drawCurve(this.strokeWeight * 8, 100);
+      this.drawCurve(this.strokeWeight * 4, 100);
+      this.drawCurve(this.strokeWeight * 2, 100);
+      this.drawCurve(this.strokeWeight, 100);
+   }
+}
+
+
+function setup() 
+{
+  width = 720.0;
+  height = 240.0;
+
+  pallet.push({r: 255, g: 65, b: 172}); //pink
+  pallet.push({r: 127, g: 73, b: 133}); // pink,purple
+  pallet.push({r: 2, g: 196, b: 73}); // green
+  pallet.push({r: 38, g: 82, b: 145}); // blue
+  pallet.push({r: 0, g: 60, b: 145}); // darker blue
+
+  var numCurves = 10;
+  var minPointsPerCurve = 3;
+  var maxPointsPerCurve = 7;
+  var minStrokeWeight = 2;
+  var maxStrokeWeight = 2;
+  for (var i = 0; i < numCurves; i++)
+  {
+      var numPoints = random(minPointsPerCurve, maxPointsPerCurve);
+      var strokeWeight = random(minStrokeWeight, maxStrokeWeight);
+      var c = new Curve();
+      c.generate(numPoints, strokeWeight, width*0.9, height*0.9);
+      curves.push(c);
+  }
+
+  createCanvas(width, height);
+  p5.disableFriendlyErrors = true;
+
+  background(0);
+  noFill();
+  for (var i = 0; i < curves.length; i++) 
+  {
+     curves[i].draw();
+  }  
+}
+
+function draw() 
+{
+
+}
+</script>
+<body>
+</body>
+</html>
+
+
