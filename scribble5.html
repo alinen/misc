@@ -3,18 +3,17 @@
 <script language="javascript" type="text/javascript">
 
 var pallet = [];
-var poissonBlur = [];
-var gaussianBlur = [];
 var width = 0.0;
 var height = 0.0;
 var curves = [];
+var angleTarget = 0;
 
 class Curve
 {
    constructor()
    {
       this.points = [];
-      this.color = random(pallet);
+      this.color = {r:255, g:255, b:255, a:255}; 
       this.strokeWeight = 1;
    }
 
@@ -46,18 +45,50 @@ class Curve
 
    draw()
    {
-      this.drawCurve(this.strokeWeight * 8, 100);
-      this.drawCurve(this.strokeWeight * 4, 100);
-      this.drawCurve(this.strokeWeight * 2, 100);
-      this.drawCurve(this.strokeWeight, 100);
+      this.drawCurve(this.strokeWeight * 8, 10);
+      this.drawCurve(this.strokeWeight * 4, 10);
+      this.drawCurve(this.strokeWeight * 2, 10);
+      this.drawCurve(this.strokeWeight, 10);
    }
 }
 
+class AnimatedCurve
+{
+   constructor(curve)
+   {
+      this.angle = random(0, TWO_PI);
+      this.current = 0;
+      this.next = 1;
+      this.curve = curve;
+      this.finished = false;
+   }
+
+   draw()
+   {
+      if (this.finished === true) return;
+      var t = (Math.sin(this.angle) + 1.0)*0.5;
+      this.angle += 0.05;
+      if (this.angle > angleTarget)
+      {
+         angleTarget += TWO_PI;
+         this.next = this.next + 1
+         if (this.next === this.curve.length)
+         {
+             this.finished = true;
+             return;
+         }
+         console.log("test "+this.next+" "+t);
+      }
+
+      var cblend = blendCurves(this.curve[0], this.curve[this.next], t);
+      cblend.draw();
+   }
+}
 
 function setup() 
 {
-  width = 720.0;
-  height = 240.0;
+  width = 500.0;
+  height = 500.0;
 
   pallet.push({r: 255, g: 65, b: 172}); //pink
   pallet.push({r: 127, g: 73, b: 133}); // pink,purple
@@ -65,34 +96,69 @@ function setup()
   pallet.push({r: 38, g: 82, b: 145}); // blue
   pallet.push({r: 0, g: 60, b: 145}); // darker blue
 
-  var numCurves = 10;
+  var numCurves = 1;
+  var curvesPerCurve = 3;
   var minPointsPerCurve = 3;
   var maxPointsPerCurve = 7;
-  var minStrokeWeight = 2;
-  var maxStrokeWeight = 2;
+  var minStrokeWeight = 1;
+  var maxStrokeWeight = 1;
+  var numPoints = 10;
+  var cidx = Math.floor(random(0, pallet.length));
+  console.log(cidx);
   for (var i = 0; i < numCurves; i++)
   {
-      var numPoints = random(minPointsPerCurve, maxPointsPerCurve);
       var strokeWeight = random(minStrokeWeight, maxStrokeWeight);
-      var c = new Curve();
-      c.generate(numPoints, strokeWeight, width*0.9, height*0.9);
-      curves.push(c);
+
+      var cc = [];
+      for (var j = 0; j < curvesPerCurve; j++)
+      {
+         cidx = (1+cidx) % pallet.length;
+         var c = new Curve();
+         c.color = {r: Math.floor(random(0,255)), 
+                    g: Math.floor(random(0,255)), 
+                    b: Math.floor(random(0,255))}; //pallet[cidx];
+         c.generate(numPoints, strokeWeight, width, height);
+         cc.push(c);
+      }
+      var animatedCurve = new AnimatedCurve(cc);
+      curves.push(animatedCurve);
   }
 
   createCanvas(width, height);
-  p5.disableFriendlyErrors = true;
-
   background(0);
-  noFill();
-  for (var i = 0; i < curves.length; i++) 
-  {
-     curves[i].draw();
-  }  
+  p5.disableFriendlyErrors = true;
+}
+
+function blendCurves(c1, c2, t)
+{
+   var c = new Curve();
+
+   c.color.r = c2.color.r * t + c1.color.r * (1.0-t);
+   c.color.g = c2.color.g * t + c1.color.g * (1.0-t);
+   c.color.b = c2.color.b * t + c1.color.b * (1.0-t);
+   c.color.a = c2.color.a * t + c1.color.a * (1.0-t);
+   c.strokeWeight = c2.strokeWeight * t + c1.strokeWeight * (1.0-t);
+
+   c.points = [];
+   for (var i = 0; i < c1.points.length; i++)
+   {
+      var p1 = c1.points[i];
+      var p2 = c2.points[i];
+      var p = {x: p2.x * t + p1.x * (1.0-t), 
+               y: p2.y * t + p1.y * (1.0-t)};
+      c.points.push(p);
+   }
+
+   return c;
 }
 
 function draw() 
 {
-
+  noFill();
+  for (var i = 0; i < curves.length; i++)
+  {
+    curves[i].draw();
+  }   
 }
 </script>
 <body>
