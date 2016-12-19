@@ -1,0 +1,78 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var pallet = [];
+var width = 0.0;
+var height = 0.0;
+var angles = [];
+var colors = [];
+var numCircles = 5;
+var debug = false;
+var pause = false;
+
+function setup() 
+{
+  width = 500.0;
+  height = 500.0;
+
+  for (var i = 0; i < numCircles; i++)
+  {
+     colors.push({r:random(50,255), g:random(50,255), b:random(50,255)});
+     angles.push(0);
+  }
+
+  createCanvas(width, height);
+  background(0);
+  p5.disableFriendlyErrors = true;
+}
+
+function mouseClicked()
+{
+   pause = !pause;
+}
+
+function draw() 
+{
+   if (pause) return;
+
+   if (debug) background(0);
+
+   blendMode(BLEND);
+   //stroke(0, 0, 0);
+   //strokeWeight(1.0);
+   noStroke();
+
+   var angleInc = 0.1;
+   var alpha = 100;
+   var p = {x:0, y:0};
+   var r = 100;
+   var center = {x: width * 0.5, y: height * 0.5};
+   for (var i = 0; i < angles.length; i++)
+   {
+      if (debug)
+      {
+         ellipse(center.x + p.x, center.x + p.y, 2*r, 2*r);
+      }
+      else
+      {
+         fill(colors[i].r, colors[i].g, colors[i].b, alpha);
+      } 
+      p.x += r * Math.cos(angles[i]);
+      p.y += r * Math.sin(angles[i]);
+      r = Math.max(5, r * 0.5);
+      var displayRadius = 15; 
+      push();
+         translate(center.x, center.y);
+         rotate(random(10,60));
+         ellipse(p.x, p.y, 2*displayRadius, 0.5*displayRadius);
+      pop();
+      angles[i] += angleInc * (i+1);
+   }   
+}
+</script>
+<body>
+</body>
+</html>
+
+

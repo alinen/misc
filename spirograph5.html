@@ -1,0 +1,99 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var pallet = [];
+var width = 0.0;
+var height = 0.0;
+var angles = [];
+var colors = [];
+var numCircles = 20;
+var debug = false;
+var pause = false;
+
+function setup() 
+{
+  width = 500.0;
+  height = 500.0;
+
+  for (var i = 0; i < numCircles; i++)
+  {
+     colors.push({r:random(50,255), g:random(50,255), b:random(50,255)});
+     angles.push(0);
+  }
+
+  createCanvas(width, height);
+  background(0);
+  p5.disableFriendlyErrors = true;
+}
+
+function mouseClicked()
+{
+   pause = !pause;
+}
+
+function draw() 
+{
+   if (pause) return;
+
+   if (debug)
+   {
+      background(0);
+      stroke(255, 255, 255);
+      strokeWeight(1.0);
+      noFill();
+   }
+   else
+   {
+      //stroke(0,0,0);
+      //strokeWeight(1.0);
+      noStroke();
+   }
+
+   blendMode(BLEND);
+
+   var ratio = 1;
+   var angleInc = 0.01;
+   var alpha = 100;
+   var p = {x:0, y:0};
+   var startRadius = 50.0;
+   var r = startRadius;
+   var center = {x: width * 0.5, y: height * 0.5};
+   for (var i = 0; i < angles.length; i++)
+   {
+      if (debug)
+      {
+         ellipse(center.x + p.x, center.x + p.y, 2*r, 2*r);
+      }
+      else
+      {
+         fill(colors[i].r, colors[i].g, colors[i].b, alpha);         
+      } 
+
+      if (i == 0)
+      {
+         // https://en.wikipedia.org/wiki/Maurer_rose
+         var n = 2.0;
+         var rr = 2.0 * r * sin(n * angles[i]);
+         p.x += rr * Math.cos(angles[i]);
+         p.y += rr * Math.sin(angles[i]);
+      }
+      else
+      {
+         p.x += r * Math.cos(angles[i]);
+         p.y += r * Math.sin(angles[i]);
+      }
+      r = startRadius / (i+1.0);
+     
+      var displayRadius = Math.max(1.0, 5*(1.0-float(i)/angles.length)); 
+      ellipse(center.x + p.x, center.y + p.y, displayRadius, displayRadius);
+      var updateRate = (angleInc * (1.0 + i*ratio)) % TWO_PI;
+      angles[i] += updateRate;
+   }   
+}
+</script>
+<body>
+</body>
+</html>
+
+
