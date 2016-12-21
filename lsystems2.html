@@ -1,0 +1,104 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+// quadratic koch island curve
+var width = 0.0;
+var height = 0.0;
+var current = "F-F-F-F";
+var delta = 0.0;
+var d = 50.0;
+var pg = null;
+var pallet = [];
+var colorId = 0;
+
+function setup() 
+{
+  width = 500.0;
+  height = 500.0;
+  delta = HALF_PI;
+  pallet.push({r: 102, g: 0, b: 71}); //dark red
+  pallet.push({r: 164, g: 0, b: 54}); // rose red
+  pallet.push({r: 221, g: 0, b: 6}); // green1
+  pallet.push({r: 255, g: 67, b: 0}); // green2
+  pallet.push({r: 255, g: 199, b: 0}); // green3
+
+  createCanvas(width, height);
+  background(0);
+  p5.disableFriendlyErrors = true;
+  pg = createGraphics(width, height);
+  pg.background(0);
+
+  drawRule();
+}
+
+function applyRule()
+{
+   current = current.replace(/F/g, "F+FF-FF-F-F+F+FF-F-F+F+FF+FF-F");
+   d = d*0.5;
+}
+
+function mouseClicked()
+{
+   applyRule();
+   drawRule();
+}
+
+
+function draw() 
+{
+   image(pg, 0, 0);
+}
+
+function drawRule()
+{
+   pg.background(255,200,0);
+   pg.blendMode(BLEND);
+   var rot = 0;
+   var pos = {x:50, y:150};
+   for (var i = 0; i < current.length; i++)
+   {
+      colorId = (colorId+1) % pallet.length;
+      if (current[i] === 'F')
+      {
+         var color = pallet[colorId];
+         pg.noStroke();
+         pg.fill(color.r, color.g, color.b, 100);
+
+         var nextpos = {x: pos.x+ d * Math.cos(rot), y: pos.y + d * Math.sin(rot)};
+         pg.rect(pos.x, pos.y, d*10, d);
+         pos = nextpos;
+         
+      }
+      else if (current[i] === 'f') pos = {x: pos.x+ d * Math.cos(rot), y: pos.y + d * Math.sin(rot)};
+      else if (current[i] === '+') rot += delta;
+      else if (current[i] === '-') rot -= delta;
+   }
+
+   rot = 0;
+   pos = {x:50, y:150};   
+   for (var i = 0; i < current.length; i++)
+   {
+      if (current[i] === 'F')
+      {
+         var nextpos = {x: pos.x+ d * Math.cos(rot), y: pos.y + d * Math.sin(rot)};
+         pg.stroke(255, 255, 255, 100);
+         pg.strokeWeight(4.0);
+         pg.line(pos.x, pos.y, nextpos.x, nextpos.y);
+         pg.strokeWeight(1.0);
+         pg.stroke(255, 255, 255, 250);
+         pg.line(pos.x, pos.y, nextpos.x, nextpos.y);
+         pos = nextpos;
+         
+      }
+      else if (current[i] === 'f') pos = {x: pos.x+ d * Math.cos(rot), y: pos.y + d * Math.sin(rot)};
+      else if (current[i] === '+') rot += delta;
+      else if (current[i] === '-') rot -= delta;
+   }   
+}
+</script>
+<body>
+</body>
+</html>
+
+
