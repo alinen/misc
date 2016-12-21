@@ -1,0 +1,94 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+// quadratic koch island curve
+var width = 0.0;
+var height = 0.0;
+var current = "F-F-F-F";
+var delta = 0.0;
+var d = 50.0;
+var pg = null;
+var pallet = [];
+var colorId = 0;
+
+function setup() 
+{
+  width = 500.0;
+  height = 500.0;
+  delta = HALF_PI;
+  pallet.push({r: 255, g: 65, b: 172}); //pink
+  pallet.push({r: 127, g: 73, b: 133}); // pink,purple
+  pallet.push({r: 2, g: 196, b: 73}); // green
+  pallet.push({r: 38, g: 82, b: 145}); // blue
+  pallet.push({r: 0, g: 60, b: 145}); // darker blue
+
+  createCanvas(width, height);
+  background(0);
+  p5.disableFriendlyErrors = true;
+  pg = createGraphics(width, height);
+  pg.background(0);
+
+  drawRule();
+}
+
+function applyRule()
+{
+   current = current.replace(/F/g, "F-F+F+FF-F-F+F");
+   d = d*0.9;
+}
+
+function mouseClicked()
+{
+   applyRule();
+   drawRule();
+}
+
+
+
+function draw() 
+{
+   image(pg, 0, 0);
+}
+
+function drawRule()
+{
+   pg.background(0);
+
+   pg.blendMode(ADD);
+     
+   var rot = 0;
+   var pos = {x:d, y:height/2-d};
+   for (var i = 0; i < current.length; i++)
+   {
+      colorId = (colorId+1) % pallet.length;
+      if (current[i] === 'F')
+      {
+         var color = pallet[colorId];
+         pg.stroke(255, 255, 255);
+         pg.fill(color.r, color.g, color.b, 100);
+         pg.strokeWeight(1.0);
+
+         var nextpos = {x: pos.x+ d * Math.cos(rot), y: pos.y + d * Math.sin(rot)};
+         //pg.ellipse(pos.x, pos.y, d, d);
+         pg.rect(pos.x, pos.y, d, d);
+
+         pg.stroke(0, 255, 255, 100);
+         pg.strokeWeight(4.0);
+         pg.line(pos.x, pos.y, nextpos.x, nextpos.y);
+         pg.strokeWeight(1.0);
+         pg.stroke(255, 255, 255, 250);
+         pg.line(pos.x, pos.y, nextpos.x, nextpos.y);
+         pos = nextpos;
+         
+      }
+      else if (current[i] === '+') rot += delta;
+      else if (current[i] === '-') rot -= delta;
+   }
+}
+</script>
+<body>
+</body>
+</html>
+
+
