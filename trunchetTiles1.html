@@ -1,0 +1,85 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+// https://en.wikipedia.org/wiki/Truchet_tiles
+var width = 0.0;
+var height = 0.0;
+var baseColor = null;
+var tiles = [];
+var tileSize = 50;
+var numRows = 10;
+var numCols = 10;
+var offset = 50;
+
+function setup() 
+{
+  width = tileSize * numCols;
+  height = tileSize * numRows;
+
+  baseColor = {r: Math.random() * 255, 
+               g: Math.random() * 255,
+               b: Math.random() * 255};
+
+  createCanvas(width, height);
+  
+  var pg = createGraphics(tileSize, tileSize);
+  pg.background(0, 200, 200);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,0, 0,25, 25,0);
+  tiles.push(pg);
+
+  pg = createGraphics(tileSize, tileSize);
+  pg.background(255);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,0, 25,25, 0,25);  
+  tiles.push(pg);
+
+  pg = createGraphics(tileSize, tileSize);
+  pg.background(0, 200, 0);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,0, 25,0, 25,25);    
+  tiles.push(pg);
+
+  var pg = createGraphics(tileSize, tileSize);
+  pg.background(200, 0, 0);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,25, 25,0, 25,25);    
+  tiles.push(pg);
+
+  drawTiles();
+}
+
+function mouseClicked()
+{
+   drawTiles();
+}
+
+function drawTiles() 
+{
+   for (var i = 0; i < numRows; i++)
+   {
+      for (var j = 0; j < numCols; j++)
+      {
+         var tileId = Math.floor(Math.random() * 4);
+         var x = j * tileSize;
+         var y = i * tileSize;
+         image(tiles[tileId], x, y, tileSize+1, tileSize+1);
+      }
+   }
+}
+
+function draw()
+{
+}
+
+</script>
+<body>
+</body>
+</html>
+
+

@@ -1,0 +1,115 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+// https://en.wikipedia.org/wiki/Truchet_tiles
+var width = 0.0;
+var height = 0.0;
+var baseColor = null;
+var tiles = [];
+var tileSize = 50;
+var numRows = 10;
+var numCols = 10;
+var offset = 50;
+var pause = true;
+
+function setup() 
+{
+  width = tileSize * numCols;
+  height = tileSize * numRows;
+
+  baseColor = {r: Math.random() * 200, 
+               g: Math.random() * 200,
+               b: Math.random() * 200};
+
+  createCanvas(width, height);
+  
+  var pg = createGraphics(tileSize, tileSize);
+  pg.background(255);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,0, 0,25, 25,0);
+  tiles.push(pg);
+
+  pg = createGraphics(tileSize, tileSize);
+  pg.background(255);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,0, 25,25, 0,25);  
+  tiles.push(pg);
+
+  pg = createGraphics(tileSize, tileSize);
+  pg.background(255);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,0, 25,0, 25,25);    
+  tiles.push(pg);
+
+  var pg = createGraphics(tileSize, tileSize);
+  pg.background(255);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,25, 25,0, 25,25);    
+  tiles.push(pg);
+
+  drawTiles();
+}
+
+function jitter()
+{
+  var redJitter = 2.0 * Math.random() * offset + offset; 
+  var greenJitter = 2.0 * Math.random() * offset + offset; 
+  var blueJitter = 2.0 * Math.random() * offset + offset; 
+
+  var red = baseColor.r + redJitter;
+  var green = baseColor.g + greenJitter;
+  var blue = baseColor.b + blueJitter;   
+
+  return {r:red, g: green, b: blue};
+}
+
+function mouseClicked()
+{
+   baseColor = {r: Math.random() * 200, 
+               g: Math.random() * 200,
+               b: Math.random() * 200};
+   
+   drawTiles();
+}
+
+function drawTiles() 
+{
+   blendMode(REPLACE);
+   background(255);
+
+   blendMode(MULTIPLY);
+   for (var i = 0; i < numRows; i++)
+   {
+      for (var j = 0; j < numCols; j++)
+      {
+         //var tileId = i % tiles.length;
+         //var tileId = j % tiles.length;
+         var tileId = Math.floor(Math.random() * tiles.length);
+         var x = j * tileSize;
+         var y = i * tileSize;
+
+         image(tiles[tileId], x, y, tileSize+1, tileSize+1);
+
+         var c = jitter();
+         fill(c.r, c.g, c.b);
+         noStroke();
+         rect(x,y,tileSize+1, tileSize+1);
+      }
+   }
+}
+
+function draw()
+{
+}
+
+</script>
+<body>
+</body>
+</html>
+
+

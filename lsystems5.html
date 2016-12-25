@@ -1,0 +1,163 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+// quadratic koch island curve
+var width = 0.0;
+var height = 0.0;
+var current = "X";
+var delta = 0.0;
+var d = 50.0;
+var pg = null;
+var startColor = null;
+var endColor = null;
+var pallet1 = [];
+var pallet2 = [];
+var colorId = 0;
+
+function setup() 
+{
+  width = 500.0;
+  height = 500.0;
+  delta = 22.5 * PI / 180.0;
+  pallet1.push({r: 251, g: 235, b: 242});
+  pallet1.push({r: 238, g: 191, b: 214}); 
+  pallet1.push({r: 231, g: 178, b: 202}); 
+  pallet1.push({r: 212, g: 167, b: 207}); 
+  pallet1.push({r: 32, g: 65, b: 106}); 
+
+  pallet2.push({r: 111, g: 3, b: 3});
+  pallet2.push({r: 227, g: 9, b: 64}); 
+  pallet2.push({r: 255, g: 23, b: 81}); 
+  pallet2.push({r: 255, g: 78, b: 96}); 
+  pallet2.push({r: 255, g: 169, b: 132}); 
+
+  startColor = color(0,0,100);
+  endColor = color(50,100,500);
+
+  createCanvas(width, height);
+  background(0);
+  p5.disableFriendlyErrors = true;
+  pg = createGraphics(width, height);
+  pg.background(0);
+
+  drawRule();
+}
+
+function applyRule()
+{
+   current = current.replace(/X/g, "+[[X]+X]+F[+FX]-X");
+   current = current.replace(/F/g, "FF");
+   d = d*0.6;
+}
+
+function mouseClicked()
+{
+   applyRule();
+   drawRule();
+}
+
+
+function draw() 
+{
+   image(pg, 0, 0);
+}
+
+function drawRect(color, pos, nextpos)
+{
+   pg.noStroke();
+   pg.fill(color.r, color.g, color.b, 100);
+   pg.rect(pos.x, pos.y, d*10, d);
+}
+
+function drawCircle(color, pos, nextpos)
+{
+   pg.noStroke();
+   pg.fill(color.r, color.g, color.b, 100);
+   pg.ellipse(pos.x, pos.y, d, d);
+}
+
+function drawLine(color, pos, nextpos)
+{
+   pg.stroke(color.r, color.g, color.b, 100);
+   pg.strokeWeight(8.0);
+   pg.line(pos.x, pos.y, nextpos.x, nextpos.y);
+   pg.strokeWeight(1.0);
+   pg.stroke(color.r, color.g, color.b, 250);
+   pg.line(pos.x, pos.y, nextpos.x, nextpos.y);
+}
+
+function drawRectLine(color, pos, nextpos)
+{
+   drawLine(color, pos, nextpos);
+   drawRect(color, pos, nextpos);
+}
+
+function drawGrammar(startPos, startRot, drawFn, pallet)
+{
+   var stack = [];
+   var pos = startPos;
+   var rot = startRot;
+   for (var i = 0; i < current.length; i++)
+   {
+      colorId = (colorId+1) % pallet.length;
+      if (current[i] === 'F')
+      {
+         var color = pallet[colorId];
+         var nextpos = {x: pos.x+ d * Math.cos(rot), y: pos.y + d * Math.sin(rot)};
+         drawFn(color, pos, nextpos);
+         pos = nextpos;
+         
+      }
+      else if (current[i] === 'f') pos = {x: pos.x+ d * Math.cos(rot), y: pos.y + d * Math.sin(rot)};
+      else if (current[i] === '+') rot += delta;
+      else if (current[i] === '-') rot -= delta;
+      else if (current[i] === '[') stack.push({p: pos, r: rot});
+      else if (current[i] === ']')
+      {
+         var turtle = stack.pop();
+         pos = turtle.p;
+         rot = turtle.r;
+      }
+   }
+}
+
+function drawBackground()
+{
+   pg.background(0);
+   pg.noStroke();
+   var gradHeight = 10.0;
+   var res = Math.floor(height / gradHeight);
+   for (var i = 0; i < res; i++)
+   {
+      var t = i/res;
+      var c = lerpColor(startColor, endColor, t);
+      pg.fill(c);
+      var y = i * gradHeight;
+      pg.rect(0, y, width, gradHeight);
+   }
+}
+
+function drawRule()
+{
+   pg.blendMode(BLEND);
+   drawBackground();
+   var rot = PI;
+   var pos = {x:200, y:250};
+   drawGrammar(pos, rot, drawLine, pallet2);
+
+   rot = PI;
+   pos = {x:75, y:250};   
+   drawGrammar(pos, rot, drawLine, pallet1);
+
+   rot = PI;
+   pos = {x:250, y:150};   
+   drawGrammar(pos, rot, drawLine, pallet2);   
+    
+}
+</script>
+<body>
+</body>
+</html>
+
+
