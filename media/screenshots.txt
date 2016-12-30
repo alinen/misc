@@ -1,4 +1,7 @@
 screenshots.txt
+truchet4.png
+SPHLandscape3.png
+SPHLandscape2.png
 lsystem-branch-greenred3.png
 lsystem-branch-greenred2.png
 lsystem-branch-greenred.png
