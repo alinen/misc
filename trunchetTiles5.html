@@ -1,0 +1,181 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+// https://en.wikipedia.org/wiki/Truchet_tiles
+var width = 0.0;
+var height = 0.0;
+var baseColor = null;
+var tiles = [];
+var tileSize = 25;
+var numRows = 10;
+var numCols = 10;
+var offset = 50;
+var pause = true;
+var lastI = -1;
+var lastJ = -1;
+var pattern = [];
+var colors = [];
+
+function setup() 
+{
+  width = tileSize * numCols;
+  height = tileSize * numRows;
+
+  baseColor = {r: Math.random() * 200, 
+               g: Math.random() * 200,
+               b: Math.random() * 200};
+
+  createCanvas(width, height);
+  
+  var pg = createGraphics(tileSize, tileSize);
+  pg.background(255);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,0, 0,25, 25,0);
+  tiles.push(pg);
+
+  pg = createGraphics(tileSize, tileSize);
+  pg.background(255);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,0, 25,25, 0,25);  
+  tiles.push(pg);
+
+  pg = createGraphics(tileSize, tileSize);
+  pg.background(255);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,0, 25,0, 25,25);    
+  tiles.push(pg);
+
+  var pg = createGraphics(tileSize, tileSize);
+  pg.background(255);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,25, 25,0, 25,25);    
+  tiles.push(pg);
+
+  var numTiles = numRows * numCols;
+  for (var i = 0; i < numTiles; i++)
+  {
+     pattern.push(0);
+     colors.push({r:0,g:0,b:0});
+  }
+
+  reset();
+  drawTiles();
+}
+
+function jitter()
+{
+  var redJitter = 2.0 * Math.random() * offset + offset; 
+  var greenJitter = 2.0 * Math.random() * offset + offset; 
+  var blueJitter = 2.0 * Math.random() * offset + offset; 
+
+  var red = baseColor.r + redJitter;
+  var green = baseColor.g + greenJitter;
+  var blue = baseColor.b + blueJitter;   
+
+  return {r:red, g: green, b: blue};
+}
+
+function reset()
+{
+  for (var i = 0; i < numRows; i++)
+  {
+     for (var j = 0; j < numCols; j++)
+     {
+        var idx = i * numCols + j;
+        pattern[idx] = i % tiles.length;
+        
+        var c = jitter();
+        colors[idx] = c;
+     }
+  }   
+}
+
+function mouseClicked()
+{
+  for (var i = 0; i < numRows; i++)
+  {
+     for (var j = 0; j < numCols; j++)
+     {
+        var idx = i * numCols + j;
+        pattern[idx] = (pattern[idx]+1) % tiles.length;
+     }
+  }   
+  drawTiles();
+}
+
+function mouseMoved()
+{
+   var i = Math.floor(mouseY / tileSize);
+   var j = Math.floor(mouseX / tileSize);
+
+   if (i != lastI || j != lastJ)
+   {
+      if (lastI > -1 && lastJ > -1 && lastI < numRows && lastJ < numCols)
+      {
+         var oldIdx = j * numCols + i;
+         pattern[oldIdx] = (pattern[oldIdx] + 1) % tiles.length;
+
+         var c = colors[oldIdx];
+         clearTile(i, j);
+         drawTile(i, j, pattern[oldIdx], c);
+      }
+      lastI = i;
+      lastJ = j;
+   }
+}
+
+function clearTile(i, j)
+{
+   blendMode(REPLACE);
+   fill(255);
+   var x = j * tileSize;
+   var y = i * tileSize;
+   rect(x,y,tileSize+1, tileSize+1);
+}
+
+function drawTile(i, j, tileId, c)
+{
+   blendMode(MULTIPLY);
+   var x = j * tileSize;
+   var y = i * tileSize;
+
+   image(tiles[tileId], x, y, tileSize+1, tileSize+1);
+
+   fill(c.r, c.g, c.b);
+   rect(x,y,tileSize+1, tileSize+1);
+}
+
+function drawTiles() 
+{
+   noStroke();
+   blendMode(REPLACE);
+   background(255);
+
+   blendMode(MULTIPLY);
+   for (var i = 0; i < numRows; i++)
+   {
+      for (var j = 0; j < numCols; j++)
+      {
+         var idx = i * numCols + j;
+         var tileId = pattern[idx];
+         var c = colors[idx];
+         drawTile(i, j, tileId, c);
+      }
+   }
+}
+
+function draw()
+{
+}
+
+</script>
+<body>
+</body>
+</html>
+
+
