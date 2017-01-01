@@ -1,4 +1,8 @@
 screenshots.txt
+webNebula.gif
+critters3-web.png
+critters1-web.png
+hide
 truchet4.png
 SPHLandscape3.png
 SPHLandscape2.png

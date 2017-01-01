@@ -1,0 +1,171 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var pause = false;
+var system = null;
+class System
+{
+   constructor(startpos, numpts)
+   {
+      this.maxacc = 100;
+      this.dt = 0.1;
+      this.mass = 1;
+      this.pos = [];
+      this.vel = [];
+      this.force = [];
+      for (var i = 0; i < numpts; i++)
+      {
+         this.pos.push({x:0,y:0});
+         this.vel.push({x:0,y:0});
+         this.force.push({x:0,y:0});
+      }
+      this._init(startpos, numpts)
+   }
+
+   _init(startpos, numpts)
+   {
+   }
+
+   update()
+   {
+      this._addForces();
+      this.addWallForces();
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         var accx = this.force[i].x/this.mass;
+         var accy = this.force[i].y/this.mass;
+         var accmag = sqrt(accx*accx + accy*accy);
+         if (accmag > this.maxacc)
+         {
+            accx = (accx/accmag) * this.maxacc;
+            accy = (accy/accmag) * this.maxacc;
+         }
+         this.vel[i].x += accx * this.dt;
+         this.vel[i].y += accy * this.dt;
+
+         this.pos[i].x += this.vel[i].x * this.dt;
+         this.pos[i].y += this.vel[i].y * this.dt;
+      }
+
+   }
+
+   _addForces()
+   {
+   }
+
+   zeroForces()
+   {
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         this.force[i].x = 0;
+         this.force[i].y = 0;
+      }
+   }
+
+   addWallForces()
+   {
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         if (this.pos[i].x < 0)
+         {
+            this.force[i].x = 10;
+            this.pos[i].x = 0;
+         }
+         else if (this.pos[i].x > width)
+         {
+            this.force[i].x = -10;
+            this.pos[i].x = width;
+         }
+
+         if (this.pos[i].y > height)
+         {
+            this.force[i].y = -10;
+            this.pos[i].y = height;
+         }
+         else if (this.pos[i].y < 0)
+         {
+            this.force[i].y = 10;
+            this.pos[i].y = 0;
+         }
+      }
+   }
+
+   draw()
+   {
+      blendMode(ADD);
+      stroke(255, 255, 255, 50);
+      for (var i = 1; i < this.pos.length; i++)
+      {
+         line(this.pos[i-1].x, this.pos[i-1].y, this.pos[i].x, this.pos[i].y);
+      }
+
+      noStroke();
+      fill(255,0,0,200);
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         ellipse(this.pos[i].x, this.pos[i].y, 1, 1);
+      }      
+   }
+}
+
+class RandomSystem extends System
+{
+   constructor(startpos, numpts)
+   {
+      super(startpos, numpts);
+   }
+
+   _init(startpos, numpts)
+   {
+      for (var i = 0; i < numpts; i++)
+      {
+         var x = random(width) - width * 0.5;
+         var y = random(height) - height * 0.5;
+         this.pos[i].x = startpos.x + x;
+         this.pos[i].y = startpos.y + y;
+         this.force[i].x = random(50);
+         this.force[i].y = random(50);
+      }
+   }
+
+   _addForces()
+   {
+   }
+}
+
+
+function keyPressed()
+{
+  if (keyCode === 80) // p
+  {
+    pause = !pause;
+  }
+}
+
+function setup() 
+{
+   var width = 500.0;
+   var height = 500.0;
+
+   createCanvas(width, height);
+   console.log("TEST");
+   system = new RandomSystem({x:250,y:250}, 4);
+   background(0);
+}
+
+function draw() 
+{
+   if (!pause)
+   {
+      system.update();
+      system.draw();
+   }
+}
+
+</script>
+<body>
+</body>
+</html>
+
+

@@ -1,0 +1,302 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var pause = false;
+var system = null;
+class System
+{
+   constructor(startpos, numpts)
+   {
+      this.maxforce = 1000;
+      this.maxacc = 100;
+      this.dt = 0.1;
+      this.mass = 1;
+      this.pos = [];
+      this.vel = [];
+      this.force = [];
+      for (var i = 0; i < numpts; i++)
+      {
+         this.pos.push({x:0,y:0});
+         this.vel.push({x:0,y:0});
+         this.force.push({x:0,y:0});
+      }
+      this._init(startpos, numpts)
+   }
+
+   _init(startpos, numpts)
+   {
+   }
+
+   update()
+   {
+      this.zeroForces();
+      this._addForces();
+      this.addWallForces();
+
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         var mag = this.dist(this.force[i], {x:0,y:0});
+         if (mag > this.maxforce)
+         {
+            this.force[i].x = (this.force[i].x/mag) * this.maxforce;
+            this.force[i].y = (this.force[i].y/mag) * this.maxforce;
+         }
+
+         var accx = this.force[i].x/this.mass;
+         var accy = this.force[i].y/this.mass;
+         var accmag = sqrt(accx*accx + accy*accy);
+         if (accmag > this.maxacc)
+         {
+            accx = (accx/accmag) * this.maxacc;
+            accy = (accy/accmag) * this.maxacc;
+         }
+         this.vel[i].x += accx * this.dt;
+         this.vel[i].y += accy * this.dt;
+
+         this.pos[i].x += this.vel[i].x * this.dt;
+         this.pos[i].y += this.vel[i].y * this.dt;
+      }
+   }
+
+   dist(pi, pj)
+   {
+      return sqrt((pi.x - pj.x)*(pi.x - pj.x) + (pi.y - pj.y)*(pi.y - pj.y));
+   }
+
+   _addForces()
+   {
+   }
+
+   zeroForces()
+   {
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         this.force[i].x = 0;
+         this.force[i].y = 0;
+      }
+   }
+
+   addWallForces()
+   {
+      var maxDist = 50;
+      var scaleFactor = 1;
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         var wallForceX = 0;
+         var wallForceY = 0;
+         if (this.pos[i].x < maxDist)
+         {
+            wallForceX += scaleFactor*Math.pow(maxDist - this.pos[i].x, 2);
+            this.pos[i].x = Math.max(0, this.pos[i].x);
+         }
+         else if (this.pos[i].x > width-maxDist)
+         {
+            wallForceX += -scaleFactor*Math.pow(maxDist - (width - this.pos[i].x), 2);
+            this.pos[i].x = Math.min(width, this.pos[i].x);
+         }
+
+         if (this.pos[i].y > height-maxDist)
+         {
+            wallForceY += -scaleFactor*Math.pow(maxDist - (height - this.pos[i].y), 2);
+            this.pos[i].y = Math.min(height, this.pos[i].y);
+         }
+         else if (this.pos[i].y < maxDist)
+         {
+            wallForceY += scaleFactor*Math.pow(maxDist - this.pos[i].y, 2);
+            this.pos[i].y = Math.max(0, this.pos[i].y);
+         }
+
+         this.force[i].x += wallForceX;
+         this.force[i].y += wallForceY;
+      }
+   }
+
+   draw()
+   {
+      stroke(255, 255, 255, 50);
+      for (var i = 1; i < this.pos.length; i++)
+      {
+         line(this.pos[i-1].x, this.pos[i-1].y, this.pos[i].x, this.pos[i].y);
+      }
+
+      noStroke();
+      fill(255,0,0,200);
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         ellipse(this.pos[i].x, this.pos[i].y, 5, 5);
+      }      
+   }
+}
+
+class RandomSystem extends System
+{
+   constructor(startpos, numpts)
+   {
+      super(startpos, numpts);
+   }
+
+   _init(startpos, numpts)
+   {
+      for (var i = 0; i < numpts; i++)
+      {
+         var x = random(width) - width * 0.5;
+         var y = random(height) - height * 0.5;
+         this.pos[i].x = startpos.x + x;
+         this.pos[i].y = startpos.y + y;
+      }
+   }
+
+   _addForces()
+   {
+      for (var i = 0; i < this.force.length; i++)
+      {
+         this.force[i].x = random(50);
+         this.force[i].y = random(50);      
+      }
+   }
+}
+
+class Blob extends System
+{
+   constructor(startpos, numpts)
+   {
+      super(startpos, numpts);
+      this.kp = 5;
+      this.kd = 1;
+      this.GRAVITY = -200;
+      this.eye = loadImage('paperDolls/eye.png');
+      this.puff = loadImage('paperDolls/puff.png');
+   }
+
+   _init(startpos, numpts)
+   {
+      var baseColor = {r:10,g:255,b:100,a:200};
+      var offset = 200;
+
+      this.color = [];
+      for (var i = 0; i < numpts; i++)
+      {
+         var x = (random(width) - width * 0.5)*0.75;
+         var y = (random(height) - height * 0.5)*0.75;
+         this.pos[i].x = startpos.x + x;
+         this.pos[i].y = startpos.y + y;
+
+         var r = baseColor.r + random(offset);
+         var g = baseColor.g + random(offset);
+         var b = baseColor.r + random(offset);
+         //console.log(r+" "+g+" "+b);
+         this.color.push({r:r,g:g,b:b,a:baseColor.a});
+      }
+
+      this.restlen = [];
+      for (var i = 0; i < numpts; i++)
+      {
+         var restlens = [];
+         for (var j = 0; j < numpts; j++)
+         {
+            var d = 0;
+            if (i !== j)
+            {
+               var pi = this.pos[i];
+               var pj = this.pos[j];
+               d = this.dist(pi, pj);
+            }
+            restlens.push(d);
+         }
+         this.restlen.push(restlens);
+      }
+   }
+
+   _addForces()
+   {
+      for (var i = 0; i < this.force.length; i++)
+      {
+         var forcex = -this.kd * this.vel[i].x;
+         var forcey = -this.GRAVITY - this.kd * this.vel[i].y;
+         if (mouseIsPressed)
+         {
+            forcex += (mouseX - this.pos[i].x);
+            forcey += (mouseY - this.pos[i].y);
+         }
+         for (var j = 0; j < this.force.length; j++)
+         {
+            if (j === i) continue;
+            var d = this.dist(this.pos[i], this.pos[j]);
+            var dirx = -(this.pos[j].x - this.pos[i].x)/d;
+            var diry = -(this.pos[j].y - this.pos[i].y)/d;
+            forcex += this.kp * (this.restlen[i][j] - d) * (dirx);
+            forcey += this.kp * (this.restlen[i][j] - d) * (diry);
+         }
+         //console.log(d+" "+forcex+" "+forcey);
+         this.force[i].x += forcex;
+         this.force[i].y += forcey;
+      }
+   }
+
+   draw()
+   {
+      /*
+      stroke(255, 255, 255, 50);
+      for (var i = 0; i < this.force.length; i++)
+      {
+         for (var j = 0; j < this.force.length; j++)
+         {
+            if (i === j) continue;
+            line(this.pos[i].x, this.pos[i].y, this.pos[j].x, this.pos[j].y);
+         }
+      }*/
+
+      noStroke();
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         //tint(this.color[i].r, this.color[i].g, this.color[i].b, this.color[i].a);
+         image(this.puff, this.pos[i].x, this.pos[i].y);
+         //fill(this.color[i].r, this.color[i].g, this.color[i].b, this.color[i].a);
+         //ellipse(this.pos[i].x, this.pos[i].y, 100, 100);
+         //console.log(this.pos[i].x + " "+ this.pos[i].y);
+      }
+
+      //tint(255);
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         image(this.eye, this.pos[i].x, this.pos[i].y);
+      }
+   }
+}
+
+function keyPressed()
+{
+  if (keyCode === 80) // p
+  {
+    pause = !pause;
+  }
+
+}
+
+function setup() 
+{
+   var width = 500.0;
+   var height = 500.0;
+
+   createCanvas(width, height);
+   imageMode(CENTER);
+   system = new Blob({x:250,y:250}, 50);
+}
+
+function draw() 
+{
+   if (!pause)
+   {
+      background(0);
+      system.update();
+      system.draw();   
+   }
+}
+
+</script>
+<body>
+</body>
+</html>
+
+

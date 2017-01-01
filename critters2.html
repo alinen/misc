@@ -1,0 +1,182 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var pause = false;
+var system = null;
+class System
+{
+   constructor(startpos, numpts)
+   {
+      this.maxacc = 25;
+      this.dt = 0.1;
+      this.mass = 1;
+      this.pos = [];
+      this.vel = [];
+      this.force = [];
+      for (var i = 0; i < numpts; i++)
+      {
+         this.pos.push({x:0,y:0});
+         this.vel.push({x:0,y:0});
+         this.force.push({x:0,y:0});
+      }
+      this._init(startpos, numpts)
+   }
+
+   _init(startpos, numpts)
+   {
+   }
+
+   update()
+   {
+      this.zeroForces();
+      this._addForces();
+      this.addWallForces();
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         var accx = this.force[i].x/this.mass;
+         var accy = this.force[i].y/this.mass;
+         var accmag = sqrt(accx*accx + accy*accy);
+         if (accmag > this.maxacc)
+         {
+            accx = (accx/accmag) * this.maxacc;
+            accy = (accy/accmag) * this.maxacc;
+         }
+         this.vel[i].x += accx * this.dt;
+         this.vel[i].y += accy * this.dt;
+
+         this.pos[i].x += this.vel[i].x * this.dt;
+         this.pos[i].y += this.vel[i].y * this.dt;
+      }
+
+   }
+
+   _addForces()
+   {
+   }
+
+   zeroForces()
+   {
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         this.force[i].x = 0;
+         this.force[i].y = 0;
+      }
+   }
+
+   addWallForces()
+   {
+      var maxDist = 250;
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         var wallForceX = 0;
+         var wallForceY = 0;
+         if (this.pos[i].x < maxDist)
+         {
+            wallForceX += 0.1*Math.pow(maxDist - this.pos[i].x, 2);
+            this.pos[i].x = Math.max(0, this.pos[i].x);
+         }
+         else if (this.pos[i].x > width-maxDist)
+         {
+            wallForceX += -0.1*Math.pow(maxDist - (width - this.pos[i].x), 2);
+            this.pos[i].x = Math.min(width, this.pos[i].x);
+         }
+
+         if (this.pos[i].y > height-maxDist)
+         {
+            wallForceY += -0.1*Math.pow(maxDist - (height - this.pos[i].y), 2);
+            this.pos[i].y = Math.min(height, this.pos[i].y);
+         }
+         else if (this.pos[i].y < maxDist)
+         {
+            wallForceY += 0.1*Math.pow(maxDist - this.pos[i].y, 2);
+            this.pos[i].y = Math.max(0, this.pos[i].y);
+         }
+
+         this.force[i].x += wallForceX;
+         this.force[i].y += wallForceY;
+      }
+   }
+
+   draw()
+   {
+      stroke(255, 255, 255, 50);
+      for (var i = 1; i < this.pos.length; i++)
+      {
+         line(this.pos[i-1].x, this.pos[i-1].y, this.pos[i].x, this.pos[i].y);
+      }
+
+      noStroke();
+      fill(200,10,10,100);
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         ellipse(this.pos[i].x, this.pos[i].y, 5, 5);
+      }      
+   }
+}
+
+class RandomSystem extends System
+{
+   constructor(startpos, numpts)
+   {
+      super(startpos, numpts);
+   }
+
+   _init(startpos, numpts)
+   {
+      for (var i = 0; i < numpts; i++)
+      {
+         var x = random(width) - width * 0.5;
+         var y = random(height) - height * 0.5;
+         this.pos[i].x = startpos.x + x;
+         this.pos[i].y = startpos.y + y;
+      }
+   }
+
+   _addForces()
+   {
+      for (var i = 0; i < this.force.length; i++)
+      {
+         this.force[i].x = random(50);
+         this.force[i].y = random(50);      
+      }
+   }
+}
+
+function keyPressed()
+{
+  if (keyCode === 80) // p
+  {
+    pause = !pause;
+  }
+}
+
+function setup() 
+{
+   var width = 500.0;
+   var height = 500.0;
+
+   createCanvas(width, height);
+   system = new RandomSystem({x:250,y:250}, 5);
+   background(0);
+}
+
+function draw() 
+{
+   if (!pause)
+   {
+      blendMode(BLEND);
+      noStroke();
+      fill(0,0,0, 10);
+      rect(0,0,width,height);
+      system.update();
+      system.draw();
+   }
+}
+
+</script>
+<body>
+</body>
+</html>
+
+
