@@ -1,4 +1,15 @@
 screenshots.txt
+SPHLandscape4.png
+SPHAttract3.gif
+SPHAttract2.gif
+SPHAttract.gif
+mouseFollow4.gif
+scribble7.png
+scribble10.png
+scribble6.png
+scribble8.png
+scribble9.png
+scribble6.1.png
 webNebula.gif
 critters3-web.png
 critters1-web.png

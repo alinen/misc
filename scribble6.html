@@ -1,0 +1,152 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var pallet = [];
+var poissonBlur = [];
+var gaussianBlur = [];
+var width = 0.0;
+var height = 0.0;
+var curves = [];
+
+class Curve
+{
+   constructor()
+   {
+      this.points = [];
+      this.color = random(pallet);
+      this.strokeWeight = 1;
+   }
+
+   generate(numPoints, strokeWeight, maxX, maxY)
+   {
+      this.strokeWeight = strokeWeight;
+      for (var i = 0; i < numPoints; i++)
+      {
+         var x = random(0, maxX);
+         var y = random(0, maxY);
+         this.points.push({x: x, y: y});
+      }
+   }
+
+   draw(pg)
+   {
+      pg.stroke(this.color.r, this.color.g, this.color.b, 200);
+      pg.strokeWeight(this.strokeWeight);
+      for (var i = 0; i < this.points.length-1; i++)
+      {
+         var previ = max(0,i-1);
+         var nexti = min(this.points.length-1,i+1);
+         var p0 = this.points[previ];
+         var p1 = this.points[i];
+         var p2 = this.points[i+1];
+         var p3 = this.points[nexti];
+         var c1 = {x: p1.x - p0.x, y: p1.y - p0.y};
+         var c2 =  {x: p3.x - p2.x, y: p3.y - p2.y};
+         pg.curve(c1.x, c1.y, p1.x, p1.y, p2.x, p2.y, c2.x, c2.y);
+      }
+   }
+}
+
+
+var img = null;
+function preload()
+{
+   img = loadImage('assets/bird1.png');
+}
+
+function stamp(pg, offsetx, offsety, stepx, stepy)
+{
+   var row = 0;
+   for (var i = offsety; i < height+stepy; i += stepy)
+   {
+      for (var j = offsetx; j < width+stepx; j += stepx)
+      {
+         image(pg, j, i);
+      }
+      row = row+1;
+   }
+}
+function makeTile()
+{
+   curves = [];
+   var numCurves = 300;
+   var minPointsPerCurve = 3;
+   var maxPointsPerCurve = 7;
+   var minStrokeWeight = 6;
+   var maxStrokeWeight = 24;
+   for (var i = 0; i < numCurves; i++)
+   {
+      var numPoints = random(minPointsPerCurve, maxPointsPerCurve);
+      var strokeWeight = random(minStrokeWeight, maxStrokeWeight);
+      var c = new Curve();
+      c.generate(numPoints, strokeWeight, width*0.9, height*0.9);
+      curves.push(c);
+   }
+
+   var density = displayDensity();
+   pg = createGraphics(img.width, img.height);
+   pg.pixelDensity(density);  
+   pg.noFill();
+   for (var i = 0; i < curves.length; i++) 
+   {
+      curves[i].draw(pg);
+   }
+   pg.blend(img, 0, 0, img.width*density-1, img.height*density-1, 0, 0, img.width, img.height, BLEND);
+   return pg;
+}
+
+function setup() 
+{
+  width = 500.0;
+  height = 500.0;
+
+  pallet.push({r: 255, g: 65, b: 172}); //pink
+  pallet.push({r: 127, g: 73, b: 133}); // pink,purple
+  pallet.push({r: 2, g: 196, b: 73}); // green
+  pallet.push({r: 38, g: 82, b: 145}); // blue
+  pallet.push({r: 0, g: 60, b: 145}); // darker blue
+
+  var density = displayDensity();
+  console.log(img.width+" "+img.height + " "+density);
+  pg1 = makeTile();
+
+  imageMode(CENTER);
+  createCanvas(width, height);
+  background(0);
+  //blendMode(SCREEN);
+  //stamp(pg1, 0, 0, 100, 200)
+  blendMode(SCREEN);
+}
+
+var lastX = -1;
+var lastY = -1;
+var threshold = 40;
+function draw()
+{
+   var d = 0;
+   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height)
+   {
+      d = sqrt((lastX-mouseX)*(lastX-mouseX) + (lastY-mouseY)*(lastY-mouseY));
+   }
+
+   if (d > threshold)
+   {
+      var density = pixelDensity();
+      image(pg, mouseX, mouseY, pg.width / density -1, pg.width / density -1);
+      lastX = mouseX;
+      lastY = mouseY;
+   }
+/*   else
+   {
+      var density = pixelDensity();
+      image(pg, lastX, lastY, pg.width / density -1, pg.width / density -1);
+   }*/
+}
+
+</script>
+<body>
+</body>
+</html>
+
+
