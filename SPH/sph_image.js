@@ -72,7 +72,7 @@ var imgPixels = [];
 
 function preload()
 {
-   img = loadImage('SPH/assets/birches-1.jpg');
+   img = loadImage('SPH/assets/mona_lisa.jpg');
 }
 
 function setup() 

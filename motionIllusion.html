@@ -1,0 +1,87 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var width = 0.0;
+var height = 0.0;
+var cellWidth = 0.0;
+var cellHeight = 0.0;
+var halfHeight = 0.0;
+var halfWidth = 0.0;
+var threshold = 0.0;
+
+function setup() 
+{
+  width = 500.0;
+  height = 500.0;
+  cellWidth = 20.0;
+  cellHeight = 20.0;
+  halfHeight = cellHeight * 0.5;
+  halfWidth = cellWidth * 0.5;
+  numCols = floor(width/cellWidth);
+  numRows = floor(height/cellHeight);
+  threshold = 70;
+
+  createCanvas(width, height);
+  p5.disableFriendlyErrors = true;
+}
+
+function draw() 
+{
+  var topx = -halfWidth;
+  var topy =  halfHeight;
+  var bottomx =  halfWidth;
+  var bottomy = -halfHeight;
+  var radius = cellWidth * 0.65;
+  var jitter = 0.1 * cellWidth;
+  background(0,0,255);
+  noStroke();
+  fill(0);
+
+  for (var i = 0; i < numRows; i++) 
+  {
+     var centery = i*cellHeight + halfHeight;
+     for (var j = 0; j < numCols; j++)
+     {
+        var idx = i * numCols + j;
+        var centerx = j*cellWidth + cellWidth * 0.5;
+        var angle = 0.0;
+        var dirx = mouseX - centerx;
+        var diry = mouseY - centery;
+        var dist = sqrt(dirx*dirx + diry*diry);
+
+        var rtopx = (j+1)*cellWidth;
+        var rtopy = (i+1)*cellHeight;
+        var rbotx = j*cellWidth;
+        var rboty = i*cellHeight;
+
+        //var dirx = 1;
+        //var diry = 0;
+        //sin
+        drawCircle(centerx, centery, dirx, diry, jitter, radius);
+     }
+  }
+}
+
+function drawCircle(x, y, dirx, diry, jitter, radius)
+{
+   var mag = sqrt(dirx * dirx + diry * diry);
+   var dx = (dirx / mag) * jitter;
+   var dy = (diry / mag) * jitter;
+
+   fill(255);
+   ellipse(x-dx, y-dy, radius, radius);
+
+   fill(0);
+   ellipse(x+dx, y+dy, radius, radius);
+
+   fill(255, 0, 0);
+   ellipse(x, y, radius, radius);
+}
+
+</script>
+<body>
+</body>
+</html>
+
+

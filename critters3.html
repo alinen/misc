@@ -250,18 +250,18 @@ class Blob extends System
       noStroke();
       for (var i = 0; i < this.pos.length; i++)
       {
-         //tint(this.color[i].r, this.color[i].g, this.color[i].b, this.color[i].a);
+         tint(this.color[i].r, this.color[i].g, this.color[i].b, 255);
          image(this.puff, this.pos[i].x, this.pos[i].y);
-         //fill(this.color[i].r, this.color[i].g, this.color[i].b, this.color[i].a);
+         //fill(this.color[i].r, this.color[i].g, this.color[i].b, 50);
          //ellipse(this.pos[i].x, this.pos[i].y, 100, 100);
          //console.log(this.pos[i].x + " "+ this.pos[i].y);
       }
 
       //tint(255);
-      for (var i = 0; i < this.pos.length; i++)
+      /*for (var i = 0; i < this.pos.length; i++)
       {
          image(this.eye, this.pos[i].x, this.pos[i].y);
-      }
+      }*/
    }
 }
 
