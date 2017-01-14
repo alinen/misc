@@ -1,6 +1,6 @@
 class State
 {
-  public static final int NumParticles = 1000; // number of particles
+  public static final int NumParticles = 800; // number of particles
   float mass; // mass
   PVector[] positions = new PVector[NumParticles];
   PVector[] velocities = new PVector[NumParticles];

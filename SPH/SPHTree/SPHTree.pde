@@ -19,7 +19,7 @@ void setup()
   background(0);
   fill(255);
 
-  img = loadImage("../assets/birches-1.jpg");
+  img = loadImage("../assets/Hs-2009-25-e-full_jpg.jpg");
   img.resize(width, height);
   init_fluid();
   
@@ -440,7 +440,7 @@ void mouseReleased(MouseEvent e)
 
 void draw() 
 {
-  //background(0);
+  background(0);
 
   if (!paused)
   {
@@ -456,19 +456,19 @@ void draw()
     
     int imgi = floor(state.positions[i].x+0.5);
     int imgj = floor(state.positions[i].y+0.5);    
-    color c = img.get(imgi, imgj);
+    color c = lerpColor(state.colors[i], img.get(imgi, imgj), 0.6);
     
     stroke(red(c)+50, green(c)+50, blue(c)+50, 255);
     //stroke(0, 0, 0, 255);
-    fill(red(c), green(c), blue(c), 10);
+    fill(red(c), green(c), blue(c), 200);
     ellipse(p.x, p.y, system.r*2, system.r*2);
   }
   
-  stroke(255);
+  /*stroke(255);
   for (int i = 0; i < obstacles.size(); i++)
   {
     line(obstacles.get(i).a.x, obstacles.get(i).a.y, obstacles.get(i).b.x, obstacles.get(i).b.y);
-  }
+  }*/
   
   if (dragNdrop)
   {
