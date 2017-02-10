@@ -1,0 +1,73 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var x = 0.05;
+var R = 4.0;
+var cache = [];
+var offset = 2;
+var cacheSize = 10;
+var iterations = 0;
+var pause = false;
+var maxX =  1.1; // for window bounds
+var maxY =  1.1; // for window bounds
+var minX = -0.1; // for window bounds
+var minY = -0.1; // for window bounds
+
+function setup() 
+{
+   var width = 500.0;
+   var height = 500.0;
+
+   createCanvas(width, height);
+   console.log("TEST");
+   background(0);
+   blendMode(ADD);
+}
+
+// Draw from -1,-1 to 1,1
+function mapCoord(x, y)
+{
+   var coord = {x:0,y:0};
+   var simWidth = maxX - minX;
+   var simHeight = maxY - minY;
+
+   coord.x = ((x - minX)/simWidth)*width;
+   coord.y = ((y - minY)/simHeight)*height;
+   return coord;
+}
+
+function mousePressed()
+{
+   pause = !pause;
+   console.log("pause "+pause);
+}
+
+function draw() 
+{
+   if (pause) return;
+
+   if (cache.length > cacheSize) cache.shift();
+   cache.push(x);
+
+   var xnew = R * x * (1 - x);
+   x = xnew;
+   iterations = iterations + 1;
+
+   if (iterations > cache.length)
+   {
+      var coord = mapCoord(cache[cache.length-offset-1], xnew);
+      noStroke();
+      fill(255, 50, 50, 100);
+      size = random(2,10);
+      ellipse(coord.x, coord.y, size, size);
+      //console.log(cache[offset] +" "+xnew);
+   }
+}
+
+</script>
+<body>
+</body>
+</html>
+
+

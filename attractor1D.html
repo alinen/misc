@@ -1,0 +1,119 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var x = 0.05;
+// ABDU, pg 36
+//var a1 = -1.1;
+//var a2 = -0.9;
+//var a3 =  0.8;
+
+// ACAV, pg 37
+var a1 = -1.0;
+var a2 = -1.2;
+var a3 =  0.9;
+
+var cache = [];
+var offset = 5;
+var cacheSize = 10;
+var iterations = 0;
+var L = 0.0;
+var sumL = 0.0;
+var pause = false;
+var iterationsMin = 100;
+var iterationsMax = 1000000;
+var minBoundX = -1000000;
+var maxBoundX =  1000000;
+var maxX =  2.6; // for window bounds
+var maxY =  2.6; // for window bounds
+var minX = -1.5; // for window bounds
+var minY = -1.5; // for window bounds
+
+var simMinX = 999999.0;
+var simMaxX = -simMinX;
+
+function setup() 
+{
+   var width = 700.0;
+   var height = 700.0;
+
+   createCanvas(width, height);
+   console.log("TEST");
+   background(0);
+   blendMode(ADD);
+}
+
+// Draw from -1,-1 to 1,1
+function mapCoord(x, y)
+{
+   var coord = {x:0,y:0};
+
+   var simWidth = maxX - minX;
+   var simHeight = maxY - minY;
+
+   coord.x = ((x - minX)/simWidth)*width;
+   coord.y = ((y - minY)/simHeight)*height;
+   return coord;
+}
+
+function mousePressed()
+{
+   pause = !pause;
+   console.log("pause "+pause+" "+simMinX+" "+simMaxX+" "+L);
+}
+
+function draw() 
+{
+   if (pause) return;
+
+   if (cache.length > cacheSize) cache.shift();
+   cache.push(x);
+
+   var xnew = a1 + a2*x + a3*x*x;
+   x = min(maxBoundX, max(minBoundX, xnew));
+   iterations = iterations + 1;
+
+   simMinX = min(x, simMinX);
+   simMaxX = max(x, simMaxX);
+
+   sumL += log(abs(a2 + a3 * x));
+   L = 0.721347 * sumL / iterations;
+
+   /*
+   if (abs(xnew) > 1000000) // unbounded
+   {
+      console.log("UNBOUNDED: Trying other parameters");
+   }
+   else if (iterations > iterationsMax) // found something
+   {
+      console.log("FOUND");
+      // TODO: Print name
+   }
+   else if (abs(xnew - x) < 0.000001) // fixed point
+   {
+      console.log("FIXED POINT");
+      // TODO: Print name and try something else
+   }
+   else if (N > iterationsMin && L < 0.005) // limit cycle
+   {
+      console.log("LIMIT CYCLE");
+      // TODO: Print name and try something else
+   }*/
+
+   if (iterations > cache.length) // draw
+   {
+      var coord = mapCoord(cache[cache.length-offset-1], xnew);
+      noStroke();
+      fill(255, 50, 50, 100);
+      size = random(2,10);
+      ellipse(coord.x, coord.y, size, size);
+      //console.log(cache[offset] +" "+xnew);
+   }
+}
+
+</script>
+<body>
+</body>
+</html>
+
+
