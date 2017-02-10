@@ -1,0 +1,114 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var b0 = {x: 86, y: 330};
+var b1 = {x: 76, y: 182};
+var b2 = {x: 268, y: 82};
+var b3 = {x: 454, y: 211};
+var time = 0;
+
+function setup()
+{
+   createCanvas(500, 500);
+}
+
+function mousePressed()
+{
+   console.log("x "+mouseX+" y "+mouseY);
+}
+
+function draw() 
+{
+   background(250);
+
+   var pointSize = 5;
+   var step = 0.005;
+
+   time += step;
+   if (time > 1.0) 
+   {
+      time = 0.0;
+   }
+
+   fill(100);
+   stroke(100);
+   strokeWeight(4);
+   ellipse(b0.x, b0.y, pointSize, pointSize);
+   ellipse(b1.x, b1.y, pointSize, pointSize);
+   ellipse(b2.x, b2.y, pointSize, pointSize);
+   ellipse(b3.x, b3.y, pointSize, pointSize);
+   line(b0.x, b0.y, b1.x, b1.y);
+   line(b1.x, b1.y, b2.x, b2.y);
+   line(b2.x, b2.y, b3.x, b3.y);
+
+   var b01x = b0.x * (1-time) + b1.x * time;
+   var b01y = b0.y * (1-time) + b1.y * time;
+   var b11x = b1.x * (1-time) + b2.x * time;
+   var b11y = b1.y * (1-time) + b2.y * time;
+   var b21x = b2.x * (1-time) + b3.x * time;
+   var b21y = b2.y * (1-time) + b3.y * time;
+
+   fill(0,255,0);
+   stroke(0,255,0);
+   line(b01x, b01y, b11x, b11y);
+   line(b11x, b11y, b21x, b21y);
+   ellipse(b01x, b01y, pointSize, pointSize);
+   ellipse(b11x, b11y, pointSize, pointSize);
+   ellipse(b21x, b21y, pointSize, pointSize);
+
+   var b02x = b01x * (1-time) + b11x * time;
+   var b02y = b01y * (1-time) + b11y * time;
+   var b12x = b11x * (1-time) + b21x * time;
+   var b12y = b11y * (1-time) + b21y * time;
+   fill(0,0,255);
+   stroke(0,0,255);
+   line(b02x, b02y, b12x, b12y);
+   ellipse(b02x, b02y, pointSize, pointSize);
+   ellipse(b12x, b12y, pointSize, pointSize);
+
+   stroke(200, 50, 50);
+   var lastP = b0;
+   for (var t = step; t < time; t += step)
+   {
+      var b01x = b0.x * (1-t) + b1.x * t;
+      var b01y = b0.y * (1-t) + b1.y * t;
+
+      var b11x = b1.x * (1-t) + b2.x * t;
+      var b11y = b1.y * (1-t) + b2.y * t;
+
+      var b21x = b2.x * (1-t) + b3.x * t;
+      var b21y = b2.y * (1-t) + b3.y * t;
+
+      var b02x = b01x * (1-t) + b11x * t;
+      var b02y = b01y * (1-t) + b11y * t;
+
+      var b12x = b11x * (1-t) + b21x * t;
+      var b12y = b11y * (1-t) + b21y * t;
+
+      var b03x = b02x * (1-t) + b12x * t;
+      var b03y = b02y * (1-t) + b12y * t;
+
+      var p = {x: b03x, y: b03y};
+      line(lastP.x, lastP.y, p.x, p.y);
+      lastP = p;
+   }
+   ellipse(lastP.x, lastP.y, pointSize, pointSize);
+
+   fill(0);
+   noStroke(0);
+   textSize(16);
+   text("b0", b0.x, b0.y-5);
+   text("b1", b1.x, b1.y-5);
+   text("b2", b2.x, b2.y-5);
+   text("b3", b3.x, b3.y-5);
+
+   text("t = "+time.toPrecision(2), 200, 400);
+}
+</script>
+<body>
+</body>
+</html>
+
+
+

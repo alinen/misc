@@ -1,0 +1,102 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var width = 0.0;
+var height = 0.0;
+var cellWidth = 0.0;
+var cellHeight = 0.0;
+var halfHeight = 0.0;
+var halfWidth = 0.0;
+var threshold = 0.0;
+
+function setup() 
+{
+  width = 600.0;
+  height = 600.0;
+  cellWidth = 30.0;
+  cellHeight = 30.0;
+  halfHeight = cellHeight * 0.5;
+  halfWidth = cellWidth * 0.5;
+  numCols = floor(width/cellWidth);
+  numRows = floor(height/cellHeight);
+  threshold = 70;
+
+  createCanvas(width, height);
+  p5.disableFriendlyErrors = true;
+  create();
+}
+
+function create() 
+{
+  var topx = -halfWidth;
+  var topy =  halfHeight;
+  var bottomx =  halfWidth;
+  var bottomy = -halfHeight;
+  var radius = cellWidth * 0.55;
+  var jitter = 0.2 * cellWidth;
+
+  background(210, 210, 0);
+
+  var points = [];
+  var angle = 0;
+  for (var j = 0; j < numCols; j++)
+  {
+      angle += PI/4;
+
+      var x = sin(angle);
+      var y = cos(angle);
+      points.push({x:x, y:y});
+  }
+
+  noStroke();
+  fill(0);
+
+  for (var i = 0; i < numRows; i++) 
+  {
+     var psi = i * PI/5.0;
+     var centery = i*cellHeight + halfHeight;
+     for (var j = 0; j < numCols; j++)
+     {
+        var idx = i * numCols + j;
+        var centerx = j*cellWidth + cellWidth * 0.5;
+        var angle = 0.0;
+
+        var dirx = points[j].x * cos(psi);
+        var diry = points[j].y * sin(psi);
+
+        var rtopx = (j+1)*cellWidth;
+        var rtopy = (i+1)*cellHeight;
+        var rbotx = j*cellWidth;
+        var rboty = i*cellHeight;
+        drawCircle(centerx, centery, dirx, diry, jitter, radius);
+     }
+  }
+}
+
+function drawCircle(x, y, dirx, diry, jitter, radius)
+{
+   var mag = sqrt(dirx * dirx + diry * diry);
+   var dx = (dirx / mag);
+   var dy = (diry / mag);
+
+   fill(255);
+   var angle = atan2(-dy, -dx);
+   arc(x, y, radius+jitter, radius+jitter, angle- PI/2, angle + PI/2);
+
+   fill(0);
+   var angle = atan2(dy, dx);
+   arc(x, y, radius+jitter, radius+jitter, angle-PI/2, angle+PI/2);
+
+   fill(0, 101, 254);
+   ellipse(x, y, radius, radius);
+   
+   console.log(dx+" "+dy+" "+angle);
+}
+
+</script>
+<body>
+</body>
+</html>
+
+
