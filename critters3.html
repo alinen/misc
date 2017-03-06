@@ -8,8 +8,8 @@ class System
 {
    constructor(startpos, numpts)
    {
-      this.maxforce = 1000;
-      this.maxacc = 100;
+      this.maxforce = 50;
+      this.maxacc = 1;
       this.dt = 0.1;
       this.mass = 1;
       this.pos = [];
@@ -165,8 +165,8 @@ class Blob extends System
       this.kp = 5;
       this.kd = 1;
       this.GRAVITY = -200;
-      this.eye = loadImage('paperDolls/eye.png');
-      this.puff = loadImage('paperDolls/puff.png');
+      this.eye = loadImage('assets/eye.png');
+      this.puff = loadImage('assets/puff.png');
    }
 
    _init(startpos, numpts)
@@ -177,8 +177,8 @@ class Blob extends System
       this.color = [];
       for (var i = 0; i < numpts; i++)
       {
-         var x = (random(width) - width * 0.5)*0.75;
-         var y = (random(height) - height * 0.5)*0.75;
+         var x = (random(width) - width * 0.5)*0.9;
+         var y = (random(height) - height * 0.5)*0.9;
          this.pos[i].x = startpos.x + x;
          this.pos[i].y = startpos.y + y;
 
@@ -210,10 +210,14 @@ class Blob extends System
 
    _addForces()
    {
+      var cogx = width * 0.5;
+      var cogy = height * 0.5;
       for (var i = 0; i < this.force.length; i++)
       {
-         var forcex = -this.kd * this.vel[i].x;
-         var forcey = -this.GRAVITY - this.kd * this.vel[i].y;
+         var gravityx = cogx - this.pos[i].x;
+         var gravityy = cogy - this.pos[i].y;
+         var forcex = gravityx - this.kd * this.vel[i].x;
+         var forcey = gravityy - this.kd * this.vel[i].y;
          if (mouseIsPressed)
          {
             forcex += (mouseX - this.pos[i].x);
@@ -247,21 +251,21 @@ class Blob extends System
          }
       }*/
 
-      noStroke();
+      /*noStroke();
       for (var i = 0; i < this.pos.length; i++)
       {
-         tint(this.color[i].r, this.color[i].g, this.color[i].b, 255);
-         image(this.puff, this.pos[i].x, this.pos[i].y);
+         //tint(this.color[i].r, this.color[i].g, this.color[i].b, 255);
+         //image(this.puff, this.pos[i].x, this.pos[i].y);
          //fill(this.color[i].r, this.color[i].g, this.color[i].b, 50);
          //ellipse(this.pos[i].x, this.pos[i].y, 100, 100);
          //console.log(this.pos[i].x + " "+ this.pos[i].y);
-      }
+      }*/
 
       //tint(255);
-      /*for (var i = 0; i < this.pos.length; i++)
+      for (var i = 0; i < this.pos.length; i++)
       {
          image(this.eye, this.pos[i].x, this.pos[i].y);
-      }*/
+      }
    }
 }
 
@@ -281,7 +285,7 @@ function setup()
 
    createCanvas(width, height);
    imageMode(CENTER);
-   system = new Blob({x:250,y:250}, 50);
+   system = new Blob({x:250,y:250}, 500);
 }
 
 function draw() 

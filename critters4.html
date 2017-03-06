@@ -1,0 +1,306 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var pause = false;
+var system = [];
+var elapsedTime = 0;
+var dt = 0.1;
+class System
+{
+   constructor(startpos, numpts)
+   {
+      this.maxforce = 5000;
+      this.maxacc = 100;
+      this.mass = 1;
+      this.pos = [];
+      this.vel = [];
+      this.force = [];
+      for (var i = 0; i < numpts; i++)
+      {
+         this.pos.push({x:0,y:0});
+         this.vel.push({x:0,y:0});
+         this.force.push({x:0,y:0});
+      }
+      this._init(startpos, numpts)
+   }
+
+   _init(startpos, numpts)
+   {
+   }
+
+   update()
+   {
+
+      this.zeroForces();
+      this._addForces();
+      this.addWallForces();
+
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         var mag = this.dist(this.force[i], {x:0,y:0});
+         if (mag > this.maxforce)
+         {
+            this.force[i].x = (this.force[i].x/mag) * this.maxforce;
+            this.force[i].y = (this.force[i].y/mag) * this.maxforce;
+         }
+
+         var accx = this.force[i].x/this.mass;
+         var accy = this.force[i].y/this.mass;
+         var accmag = sqrt(accx*accx + accy*accy);
+         if (accmag > this.maxacc)
+         {
+            accx = (accx/accmag) * this.maxacc;
+            accy = (accy/accmag) * this.maxacc;
+         }
+         this.vel[i].x += accx * dt;
+         this.vel[i].y += accy * dt;
+
+         this.pos[i].x += this.vel[i].x * dt;
+         this.pos[i].y += this.vel[i].y * dt;
+      }
+   }
+
+   dist(pi, pj)
+   {
+      return sqrt((pi.x - pj.x)*(pi.x - pj.x) + (pi.y - pj.y)*(pi.y - pj.y));
+   }
+
+   _addForces()
+   {
+   }
+
+   zeroForces()
+   {
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         this.force[i].x = 0;
+         this.force[i].y = 0;
+      }
+   }
+
+   addWallForces()
+   {
+      var maxDist = 50;
+      var scaleFactor = 1;
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         var wallForceX = 0;
+         var wallForceY = 0;
+         if (this.pos[i].x < maxDist)
+         {
+            wallForceX += scaleFactor*Math.pow(maxDist - this.pos[i].x, 2);
+            this.pos[i].x = Math.max(0, this.pos[i].x);
+         }
+         else if (this.pos[i].x > width-maxDist)
+         {
+            wallForceX += -scaleFactor*Math.pow(maxDist - (width - this.pos[i].x), 2);
+            this.pos[i].x = Math.min(width, this.pos[i].x);
+         }
+
+         if (this.pos[i].y > height-maxDist)
+         {
+            wallForceY += -scaleFactor*Math.pow(maxDist - (height - this.pos[i].y), 2);
+            this.pos[i].y = Math.min(height, this.pos[i].y);
+         }
+         else if (this.pos[i].y < maxDist)
+         {
+            wallForceY += scaleFactor*Math.pow(maxDist - this.pos[i].y, 2);
+            this.pos[i].y = Math.max(0, this.pos[i].y);
+         }
+
+         this.force[i].x += wallForceX;
+         this.force[i].y += wallForceY;
+      }
+   }
+
+   draw()
+   {
+      stroke(255, 255, 255, 50);
+      for (var i = 1; i < this.pos.length; i++)
+      {
+         line(this.pos[i-1].x, this.pos[i-1].y, this.pos[i].x, this.pos[i].y);
+      }
+
+      noStroke();
+      fill(255,0,0,200);
+      for (var i = 0; i < this.pos.length; i++)
+      {
+         ellipse(this.pos[i].x, this.pos[i].y, 5, 5);
+      }      
+   }
+}
+
+class RandomSystem extends System
+{
+   constructor(startpos, numpts)
+   {
+      super(startpos, numpts);
+   }
+
+   _init(startpos, numpts)
+   {
+      for (var i = 0; i < numpts; i++)
+      {
+         var x = random(width) - width * 0.5;
+         var y = random(height) - height * 0.5;
+         this.pos[i].x = startpos.x + x;
+         this.pos[i].y = startpos.y + y;
+      }
+   }
+
+   _addForces()
+   {
+      for (var i = 0; i < this.force.length; i++)
+      {
+         this.force[i].x = random(50);
+         this.force[i].y = random(50);      
+      }
+   }
+}
+
+class Tentacle extends System
+{
+   constructor(startpos, numpts)
+   {
+      super(startpos, numpts);
+      this.kp = 5;
+      this.kd = 10;
+      this.osc = random(3.0);
+   }
+
+   _init(startpos, numpts)
+   {
+      var baseColor = {r:10,g:170,b:100,a:200};
+      var offset = 100;
+      var r = baseColor.r + random(offset) - offset/2;
+      var g = baseColor.g + random(offset) - offset/2;
+      var b = baseColor.b + random(offset) - offset/2;
+      console.log(r+" "+g+" "+b);
+      this.color = {r:r,g:g,b:b,a:baseColor.a};
+      this.startpos = startpos;
+      this.len = 30;
+
+
+      this.restlen = [];
+      for (var i = 0; i < numpts; i++)
+      {
+         this.pos[i].x = startpos.x ;
+         this.pos[i].y = startpos.y - this.len * i;
+      }
+
+      for (var i = 0; i < numpts-1; i++)
+      {
+          this.restlen.push({pts: [i,i+1], len: this.len});
+      }
+   }
+
+   _addForces()
+   {
+      for (var i = 0; i < this.force.length; i++)
+      {
+         var forcex = - this.kd * this.vel[i].x;
+         var forcey = - this.kd * this.vel[i].y;
+         if (false) //(mouseIsPressed)
+         {
+            forcex += (mouseX - this.pos[i].x);
+            forcey += (mouseY - this.pos[i].y);
+         }
+         //console.log(d+" "+forcex+" "+forcey);
+         this.force[i].x += forcex;
+         this.force[i].y += forcey;
+      }
+
+      for (var i = 0; i < this.restlen.length; i++)
+      {
+         var i1 = this.restlen[i].pts[0];
+         var i2 = this.restlen[i].pts[1];
+         var len = this.restlen[i].len;
+         var p1 = this.pos[i1];
+         var p2 = this.pos[i2];
+         var d = this.dist(p1, p2);
+         var dirx = -(p2.x - p1.x)/d;
+         var diry = -(p2.y - p1.y)/d;
+         this.force[i1].x += this.kp * (len - d) * (dirx);
+         this.force[i1].y += this.kp * (len - d) * (diry);
+         this.force[i2].x += - this.kp * (len - d) * (dirx);
+         this.force[i2].y += - this.kp * (len - d) * (diry);
+      }
+   }
+
+   update()
+   {
+       super.update();
+       this.pos[0].y = this.startpos.y;
+
+       for (var i = 0; i < this.pos.length; i++)
+       {
+          var offset = sin(elapsedTime*0.5 + i*0.5 + this.osc);
+          this.pos[i].x = this.startpos.x + offset * this.len;
+
+          if (i > 0 && this.pos[i].y > this.pos[i-1].y-5)
+          {
+              this.pos[i].y = this.pos[i-1].y-5;
+          }
+       }
+   }
+
+   draw()
+   {
+      var sw = this.restlen.length * 1.3;
+      stroke(this.color.r, this.color.g, this.color.b, this.color.a);
+      for (var i = 0; i < this.restlen.length; i++)
+      {
+         var i1 = this.restlen[i].pts[0];
+         var i2 = this.restlen[i].pts[1];
+         var p1 = this.pos[i1];
+         var p2 = this.pos[i2];
+         strokeWeight(sw);
+         sw = sw - 1;
+         line(p1.x, p1.y, p2.x, p2.y);
+      }
+   }
+}
+
+function keyPressed()
+{
+  if (keyCode === 80) // p
+  {
+    pause = !pause;
+  }
+
+}
+
+function setup() 
+{
+   var width = 500.0;
+   var height = 250.0;
+
+   createCanvas(width, height);
+   imageMode(CENTER);
+   for (var i = 0; i < 20; i++)
+   {
+      system.push(new Tentacle({x:random(width*0.9)+width*0.05,y:height+random(50)}, 10));
+   }
+}
+
+function draw() 
+{
+   if (!pause)
+   {
+      elapsedTime += dt;
+      background(255);
+      for (var i = 0; i < system.length; i++)
+      {
+          system[i].update();
+          system[i].draw();   
+      }
+   }
+}
+
+</script>
+<body>
+</body>
+</html>
+
+

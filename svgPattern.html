@@ -1,0 +1,89 @@
+<html>
+<style>
+body {
+    background-color: #FD0000;
+}
+</style>
+<head>
+</head>
+<body>
+<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <pattern id="pattern1" x="10" y="10" width="20" height="20" patternUnits="userSpaceOnUse" >
+      <rect x="0" cy="0" width="20" height="20" style="stroke: none; fill: #ffffff" />
+      <circle cx="10" cy="10" r="6" style="stroke: none; fill: #0000ff" />
+  </pattern>
+
+  <pattern id="pattern2" x="10" y="10" width="20" height="20" patternUnits="userSpaceOnUse" >
+      <rect x="0" cy="0" width="10" height="20" style="stroke: none; fill: #0000ff" />
+      <rect x="10" cy="0" width="10" height="20" style="stroke: none; fill: #ff00ff" />
+  </pattern>  
+
+  <pattern id="pattern7" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse" >
+      <rect x="0" y="0" width="20" height="20" style="stroke: none; fill: #0000ff" />
+      <rect x="10" y="0" width="2" height="10" style="stroke: none; fill: #ff00ff" transform="rotate(20 10 0)" />
+      <rect x="10" y="0" width="2" height="10" style="stroke: none; fill: #ff00ff" transform="rotate(-20 10 0)"/>
+  </pattern>  
+
+  <pattern id="pattern3" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse" >
+      <rect x="0" y="0" width="20" height="20" style="stroke: none; fill: #ffffff" />
+      <rect x="10" cy="0" width="3" height="20" style="stroke: none; fill: #0000ff" transform="rotate(45 10 10)" />
+      <rect x="10" cy="0" width="3" height="20" style="stroke: none; fill: #0000ff" transform="rotate(-45 10 10)" />
+  </pattern>  
+
+      <linearGradient id="Gradient1">
+      <stop offset="5%" stop-color="white"/>
+      <stop offset="95%" stop-color="blue"/>
+    </linearGradient>
+    <linearGradient id="Gradient2" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="5%" stop-color="red"/>
+      <stop offset="95%" stop-color="blue"/>
+    </linearGradient>  
+    <pattern id="pattern6" x="0" y="0" width="50" height="50" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="50" height="50" fill="skyblue"/>
+      <rect x="0" y="0" width="25" height="25" fill="url(#Gradient2)"/>
+      <circle cx="25" cy="25" r="20" fill="url(#Gradient1)" fill-opacity="0.5"/>
+    </pattern>    
+
+  <pattern id="pattern4" x="0" y="0" width="1.00" height="1.00" patternUnits="objectBoundingBox" >
+      <rect x="0" y="0" width="100" height="100" style="stroke: none; fill: url(#Gradient2)" />
+      <rect x="45" y="-20" width="10" height="140" style="stroke: none; fill: #ffffff" transform="rotate(0 50 50)" />
+      <rect x="45" y="-20" width="10" height="140" style="stroke: none; fill: #ffffff" transform="rotate(30 50 50)" />
+      <rect x="45" y="-20" width="10" height="140" style="stroke: none; fill: #ffffff" transform="rotate(60 50 50)" />
+      <rect x="45" y="-20" width="10" height="140" style="stroke: none; fill: #ffffff" transform="rotate(90 50 50)" />
+      <rect x="45" y="-20" width="10" height="140" style="stroke: none; fill: #ffffff" transform="rotate(120 50 50)" />
+      <rect x="45" y="-20" width="10" height="140" style="stroke: none; fill: #ffffff" transform="rotate(150 50 50)" />
+      <rect x="45" y="-20" width="10" height="140" style="stroke: none; fill: #ffffff" transform="rotate(180 50 50)" />
+  </pattern>  
+
+  <pattern id="pattern5" x="0" y="0" width="20" height="20" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="20" height="20" style="stroke: none; fill: #ffffff" />
+      <rect x="0" y="-10" width="20" height="20" style="stroke: none; fill: #0000ff" transform="rotate(45 0 0)" />
+  </pattern>  
+
+  <pattern id="pattern8" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="15" height="20" style="stroke: none; fill: #0000ff" />
+      <rect x="15" y="0" width="5" height="20" style="stroke: none; fill: #ff00ff" />
+  </pattern>  
+
+  <pattern id="pattern9" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <rect x="0" y="0" width="20" height="10" style="stroke: none; fill: #0000ff" />
+      <rect x="0" y="10" width="20" height="10" style="stroke: none; fill: #ff00ff" />
+  </pattern>    
+</defs>
+
+<rect x="10" y="10" width="100" height="100" style="stroke: #000000; fill: url(#pattern1);" />  
+<rect x="120" y="10" width="100" height="100" style="stroke: #000000; fill: url(#pattern2);" />  
+<rect x="230" y="10" width="100" height="100" style="stroke: #000000; fill: url(#pattern3);" />  
+
+<rect x="340" y="10" width="100" height="100" style="stroke: #000000; fill: url(#pattern7);" />  
+
+<circle cx="50" cy="250" r="50" style="stroke: #000000; fill: url(#pattern4);" />  
+<circle cx="50" cy="250" r="30" style="stroke: #000000; fill: #ffffff;" />  
+
+<rect x="340" y="110" width="200" height="200" style="stroke: #000000; fill: url(#pattern6);" />  
+<rect x="450" y="10" width="100" height="100" style="stroke: #000000; fill: url(#pattern5);" />  
+<rect x="560" y="10" width="100" height="100" style="stroke: #000000; fill: url(#pattern8);" />  
+<rect x="670" y="10" width="100" height="100" style="stroke: #000000; fill: url(#pattern9);" />  
+</svg>
+</body>
