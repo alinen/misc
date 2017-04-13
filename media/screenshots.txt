@@ -1,4 +1,8 @@
 screenshots.txt
+rubiks2.gif
+voronoi-wrongblend.png
+rubiks1.gif
+rubiks.gif
 owlsvg.png
 drone.gif
 attractor2D.gif

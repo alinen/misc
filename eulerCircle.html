@@ -1,0 +1,55 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var pos = {x:300, y:250};
+function setup() 
+{
+   var width = 500.0;
+   var height = 500.0;
+
+   createCanvas(width, height);
+   console.log("TEST");
+}
+
+function draw() 
+{
+   background(255);
+   stroke(175, 175, 175);
+   noFill();
+   for (var i = 0; i < 7; i++)
+   {
+       ellipse(250,250, i*100, i*100);
+   }
+
+   stroke(0,255,0);
+   line(250, 0, 250, 250);
+
+   stroke(255,0,0);
+   line(0, 250, 250, 250);
+
+   fill(255,0,0);
+   noStroke();
+
+   var dt = document.getElementById("dt").value;
+   var x = pos.x - 250.0;
+   var y = pos.y - 250.0;
+   var radius = Math.sqrt(x*x + y*y);
+//   console.log(x +" "+y);
+   var vely = -x;
+   var velx = y;
+   pos.x += velx * dt;
+   pos.y += vely * dt;
+   ellipse(pos.x, pos.y, 15, 15);
+
+   stroke(100,0,0);
+   line(pos.x, pos.y, pos.x+velx, pos.y+vely);
+}
+
+</script>
+<body>
+<input id="dt" type="number" step="0.01" value="0.1"><br>
+</body>
+</html>
+
+

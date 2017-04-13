@@ -1,0 +1,72 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var pos = {x:400, y:400};
+var width = 500;
+var height = 500;
+
+function setup() 
+{
+    width = 500.0;
+    height = 500.0;
+   createCanvas(width, height);
+   console.log("TEST");
+}
+
+function draw() 
+{
+   background(255);
+   stroke(175, 175, 175);
+   noFill();
+
+   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height && mouseIsPressed)
+   {
+       pos.x = mouseX;
+       pos.y = mouseY;
+   }   
+
+   var dt = document.getElementById("dt").value;
+   var k = document.getElementById("k").value;
+   var x = pos.x - 250.0;
+   var y = pos.y - 250.0;
+   var vely = -k*y;
+   var velx = -k*x;
+
+   for (var i = 0; i < 500; i+= 50)
+   {
+       for (var j = 0; j < 500; j+=50)
+       {
+           var veli = -k*(i-250.0);
+           var velj = -k*(j-250.0);  
+           var mag = 25.0/Math.sqrt(veli*veli + velj*velj);
+           line(i, j, i+veli*mag, j+velj*mag);
+       }
+   }
+
+   stroke(0,255,0);
+   line(250, 0, 250, 250);
+
+   stroke(255,0,0);
+   line(0, 250, 250, 250);
+
+   fill(255,0,0);
+   noStroke();
+
+   pos.x += velx * dt;
+   pos.y += vely * dt;
+   ellipse(pos.x, pos.y, 15, 15);
+
+   stroke(100,0,0);
+   line(pos.x, pos.y, pos.x+velx, pos.y+vely);
+
+}
+
+</script>
+<body>
+<input id="dt" type="number" step="0.01" value="0.1"><br>
+<input id="k" type="number" step="0.01" value="20"><br>
+</body>
+</html>
+
+
