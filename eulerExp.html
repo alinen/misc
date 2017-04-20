@@ -17,14 +17,17 @@ function setup()
 function draw() 
 {
    background(255);
-   stroke(175, 175, 175);
-   noFill();
+
 
    if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height && mouseIsPressed)
    {
        pos.x = mouseX;
        pos.y = mouseY;
    }   
+
+   fill(255,0,0);
+   noStroke();
+   ellipse(pos.x, pos.y, 15, 15);
 
    var dt = document.getElementById("dt").value;
    var k = document.getElementById("k").value;
@@ -33,6 +36,17 @@ function draw()
    var vely = -k*y;
    var velx = -k*x;
 
+   stroke(100,0,0);
+   line(pos.x, pos.y, pos.x+velx, pos.y+vely);
+
+   stroke(100,0,0);
+   line(pos.x, pos.y, pos.x+velx, pos.y+vely);
+
+   pos.x += velx * dt;
+   pos.y += vely * dt;
+
+   stroke(175, 175, 175);
+   noFill();
    for (var i = 0; i < 500; i+= 50)
    {
        for (var j = 0; j < 500; j+=50)
@@ -50,15 +64,6 @@ function draw()
    stroke(255,0,0);
    line(0, 250, 250, 250);
 
-   fill(255,0,0);
-   noStroke();
-
-   pos.x += velx * dt;
-   pos.y += vely * dt;
-   ellipse(pos.x, pos.y, 15, 15);
-
-   stroke(100,0,0);
-   line(pos.x, pos.y, pos.x+velx, pos.y+vely);
 
 }
 

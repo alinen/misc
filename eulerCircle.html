@@ -9,7 +9,6 @@ function setup()
    var height = 500.0;
 
    createCanvas(width, height);
-   console.log("TEST");
 }
 
 function draw() 
@@ -34,8 +33,6 @@ function draw()
    var dt = document.getElementById("dt").value;
    var x = pos.x - 250.0;
    var y = pos.y - 250.0;
-   var radius = Math.sqrt(x*x + y*y);
-//   console.log(x +" "+y);
    var vely = -x;
    var velx = y;
    pos.x += velx * dt;

@@ -1,0 +1,185 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var target = {x:250, y:250};
+var width = 1000;
+var height = 800;
+var behavior = null;
+var maxTorque = 40.0;
+var maxForce = 1000.0;
+var maxSpeed = 300.0;
+var arrivalDistance = 100;
+var THETA = 0;
+var VEL = 1;
+var THETADOT = 2;
+
+class Vehicle
+{
+    constructor() 
+    {
+        this.pos = {x:0, y:0};
+        this.vel = {x:0, y:0};
+        this.veld = {x:0, y:0};
+        this.state = [0.,0.,0.];
+        this.deriv = [0.,0.,0.];
+    }
+
+    draw()
+    {
+       fill(0,0,255);
+       ellipse(this.pos.x, this.pos.y, 25, 25);
+       stroke(0,0,0);
+       line(this.pos.x, this.pos.y, this.pos.x+this.vel.x, this.pos.y+this.vel.y);
+       stroke(0,255,0);
+       line(this.pos.x, this.pos.y, this.pos.x+this.veld.x, this.pos.y+this.veld.y);
+    }
+
+    update() 
+    {
+       var dt = Number(document.getElementById("dt").value);
+       var velKv = Number(document.getElementById("Velkv").value);
+       var oriKp = Number(document.getElementById("Orikp").value);
+       var oriKv = Number(document.getElementById("Orikv").value);
+       var m = Number(document.getElementById("Mass").value);
+       var I = Number(document.getElementById("Inertia").value);
+       var e = document.getElementById("behavior");
+       behavior = getBehavior();        
+
+       // compute vd
+       var vd = behavior(this);
+       var thetad = Math.atan2(vd.y, vd.x);
+       var vdspeed = Math.sqrt(vd.x*vd.x + vd.y*vd.y);
+
+       // compute control laws
+       // compute smallest angle between thetad and current theta
+       var angleDiff = signedMod((thetad - this.state[THETA] + Math.PI), Math.PI * 2.0) - Math.PI;
+
+       var f = m * velKv * (vdspeed - this.state[VEL]);
+       var t = I * (oriKp * (angleDiff) - oriKv * (this.state[THETADOT]));
+
+       //f = Math.min(maxForce, Math.max(-maxForce, f));
+       t = Math.min(maxTorque, Math.max(-maxTorque, t));
+
+       // compute derivatives and perform Euler step
+       this.deriv[THETA] = this.state[THETADOT];
+       this.deriv[VEL] = f/m;
+       this.deriv[THETADOT] = t/I;
+
+       for (var i = 0; i < this.state.length; i++) {
+           this.state[i] += this.deriv[i] * dt;
+       }
+
+       // convert local values to global values
+       this.vel.x = Math.cos(this.state[THETA]) * this.state[VEL];
+       this.vel.y = Math.sin(this.state[THETA]) * this.state[VEL];
+
+       this.pos.x = this.pos.x + this.vel.x * dt;
+       this.pos.y = this.pos.y + this.vel.y * dt;
+
+       this.veld = vd;        
+    }
+}
+
+var agents = [];
+var agent = new Vehicle();
+
+function flee(a) {
+    vd = {x: -target.x+a.pos.x, y: -target.y+a.pos.y};
+    mag = Math.sqrt(vd.x*vd.x + vd.y*vd.y);
+    var speed = maxSpeed;
+    vd.x = vd.x * (speed/mag);
+    vd.y = vd.y * (speed/mag);
+    return vd;
+}
+
+function seek(a) {
+    vd = {x: target.x-a.pos.x, y: target.y-a.pos.y};
+    mag = Math.sqrt(vd.x*vd.x + vd.y*vd.y);
+    var speed = maxSpeed;
+    vd.x = vd.x * (speed/mag);
+    vd.y = vd.y * (speed/mag);
+    return vd;
+}
+
+function arrival(a) {
+    vd = {x: target.x-a.pos.x, y: target.y-a.pos.y};
+    mag = Math.sqrt(vd.x*vd.x + vd.y*vd.y);
+    var speed = maxSpeed;
+    if (mag < arrivalDistance) // slowdown
+    {
+        var a = (mag/arrivalDistance);
+        speed = maxSpeed * a * a * a;
+    }
+    vd.x = vd.x * (speed/mag);
+    vd.y = vd.y * (speed/mag);
+    return vd;
+}
+
+function setup() 
+{
+    width = 1000.0;
+    height = 800.0;
+    createCanvas(width, height);
+    behavior = arrival;
+}
+
+function signedMod(a, n) 
+{
+   return a - Math.floor(a/n) * n;
+}
+
+function getBehavior()
+{
+   var e = document.getElementById("behavior");
+   var strUser = e.options[e.selectedIndex].value;
+   if (strUser === "seek") return seek;
+   if (strUser === "flee") return flee;
+   if (strUser === "path") return followPath;
+   return arrival;
+}
+
+function draw() 
+{
+   background(230);
+
+   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height && mouseIsPressed)
+   {
+       target.x = mouseX;
+       target.y = mouseY;
+   }   
+
+
+   fill(255,0,0);
+   noStroke();
+   ellipse(target.x, target.y, 15, 15);
+
+   agent.draw();
+   agent.update();
+
+   stroke(0,255,0);
+   line(2, 2, 2, 250);
+
+   stroke(255,0,0);
+   line(2, 2, 250, 2);
+}
+
+</script>
+<body>
+Dt:<input id="dt" type="number" step="0.01" value="0.01"><br>
+Ori Kv: <input id="Orikv" type="number" step="0.1" value="20"><br>
+Ori Kp: <input id="Orikp" type="number" step="0.1" value="100"><br>
+Vel Kv: <input id="Velkv" type="number" step="0.1" value="5"><br>
+Mass: <input id="Mass" type="number" step="0.1" value="1"><br>
+Inertia: <input id="Inertia" type="number" step="0.1" value="1"><br>
+<select id="behavior">
+    <option value="arrival">Arrival</option>
+    <option value="seek">Seek</option>
+    <option value="flee">Flee</option>
+    <option value="path">Path</option>
+</select>
+<br>
+</body>
+</html>
+
+
