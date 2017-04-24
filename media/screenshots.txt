@@ -1,4 +1,9 @@
 screenshots.txt
+truchet9.png
+truchet8.png
+truchet7.png
+truchet6.png
+truchet5.png
 rubiks2.gif
 voronoi-wrongblend.png
 rubiks1.gif

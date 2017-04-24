@@ -1,0 +1,345 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var width = 0.0;
+var height = 0.0;
+var baseColor = null;
+var tiles = [];
+var tileSize = 50;
+var numRows = 10;
+var numCols = 10;
+var offset = 50;
+var pause = true;
+var _TOP = 0;
+var _LEFT = 1;
+var _BOTTOM = 2;
+var _RIGHT = 3;
+
+var wave = [];
+var grid = [];
+var changed = [];
+
+// encode matches between tiles
+var valid = [
+  [[0, 1, 1, 0],  // side: _TOP, matches: [1, 2]}, // TOP only matches with BOTTOM
+   [0, 1, 0, 1],  //{side: _LEFT, matches: [1, 3]}, // LEFT matches with RIGHT
+   [0, 1, 1, 0],  //{side: _BOTTOM, matches: [1, 2]}, // BOTTOM matches TOP
+   [0, 1, 0, 1]], //{side: _RIGHT, matches: [1,3]}], // RIGHT matches LEFT 
+
+  [[1, 0, 0, 1],  //{side: _TOP, matches: [0, 3]}, // TOP only matches with BOTTOM
+   [1, 0, 1, 0],  //{side: _LEFT, matches: [0, 2]}, // LEFT matches with RIGHT
+   [1, 0, 0, 1],  //{side: _BOTTOM, matches: [0, 3]}, // BOTTOM matches TOP
+   [1, 0, 1, 0]], //{side: _RIGHT, matches: [0, 2]}], // RIGHT matches LEFT 
+
+  [[1, 0, 0, 1],  //{side: _TOP, matches: [0, 3]}, // TOP only matches with BOTTOM
+   [0, 1, 0, 1],  //{side: _LEFT, matches: [1, 3]}, // LEFT matches with RIGHT
+   [1, 0, 0, 1],  //{side: _BOTTOM, matches: [0, 3]}, // BOTTOM matches TOP
+   [0, 1, 0, 1]], //{side: _RIGHT, matches: [1,3]}], // RIGHT matches LEFT 
+
+  [[0, 1, 1, 0],  //{side: _TOP, matches: [1, 2]}, // TOP only matches with BOTTOM
+   [1, 0, 1, 0],  //{side: _LEFT, matches: [0, 2]}, // LEFT matches with RIGHT
+   [0, 1, 1, 0],  //{side: _BOTTOM, matches: [1, 2]}, // BOTTOM matches TOP
+   [1, 0, 1, 0]]  //{side: _RIGHT, matches: [0,2]}] // RIGHT matches LEFT 
+]
+
+function setup() 
+{
+  width = tileSize * numCols;
+  height = tileSize * numRows;
+
+  baseColor = {r: Math.random() * 200, 
+               g: Math.random() * 200,
+               b: Math.random() * 200};
+
+  createCanvas(width, height);
+  
+  var pg = createGraphics(tileSize, tileSize);
+  pg.background(255);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,0, 0,25, 25,0);
+  tiles.push(pg);
+
+  // 1
+  var pg = createGraphics(tileSize, tileSize);
+  pg.background(255);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,25, 25,0, 25,25);    
+  tiles.push(pg);
+
+  // 2
+  pg = createGraphics(tileSize, tileSize);
+  pg.background(255);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,0, 25,25, 0,25);  
+  tiles.push(pg);  
+
+  // 3
+  pg = createGraphics(tileSize, tileSize);
+  pg.background(255);
+  pg.fill(0);
+  pg.noStroke();
+  pg.triangle(0,0, 25,0, 25,25);    
+  tiles.push(pg);
+
+  computeTiles();
+  drawTiles();
+}
+
+function jitter()
+{
+  var redJitter = 2.0 * Math.random() * offset + offset; 
+  var greenJitter = 2.0 * Math.random() * offset + offset; 
+  var blueJitter = 2.0 * Math.random() * offset + offset; 
+
+  var red = baseColor.r + redJitter;
+  var green = baseColor.g + greenJitter;
+  var blue = baseColor.b + blueJitter;   
+
+  return {r:red, g: green, b: blue};
+}
+
+function initTiles()
+{
+    wave = [];
+    grid = [];
+    for (var i = 0; i < numRows; i++)
+    {
+       wave.push([]);
+       grid.push([]);
+       for (var j = 0; j < numCols; j++)
+       {
+          //var tileId = Math.floor(Math.random() * tiles.length);
+
+          wave[i].push([]);
+          grid[i].push(-1); // no tile selected to start
+
+          // set all tile types as possible
+          for (var k = 0; k < tiles.length; k++)
+          {
+              wave[i][j].push(true);
+          }
+       }
+    }
+}
+
+function computeTiles()
+{
+    initTiles();
+    var maxIterations = 100;
+    for (var iter = 0; iter < maxIterations; iter++)
+    {
+        var result = observe();
+        if (result.finished) 
+        {
+            if (result.status === true) console.log("SUCCESS");
+            else console.log("FAILURE");
+            break;
+        }
+        while (propagate());
+    }    
+}
+
+function observe()
+{
+    var status = false;
+
+    // find a tile to update
+    var argmini = -1;
+    var argminj = -1;
+    for (var i = 0; i < numRows && argmini === -1 && argminj === -1; i++)
+    {
+       for (var j = 0; j < numCols; j++)
+       {
+          if (grid[i][j] === -1) // nothing selected yet
+          {
+              argmini = i;
+              argminj = j;
+              break;
+          }
+       }
+    }
+
+    if (argmini === -1 && argminj === -1)
+    {
+       // we did it, all done!
+       status = true;
+       return {finished: true, status: status};
+    }
+   
+    // choose a valid random tile for grid[i][j]
+    validTiles = [];
+    for (var k = 0; k < tiles.length; k++)
+    {
+        if (wave[argmini][argminj][k]) validTiles.push(k);
+    }
+
+    if (validTiles.length === 0)
+    {
+        console.log("No solution");
+        status = false;
+        return {finished: true, status: status};
+    }
+
+    // e.g. given the list of valid tiles, choose one at random
+    var selectedIdx = Math.floor(Math.random() * validTiles.length);
+    var selectedTile =  validTiles[selectedIdx];
+
+    // mark grid[i][j] as changed for updating
+    grid[argmini][argminj] = selectedTile;
+    changes = [{i:argmini, j:argminj}];
+    //console.log("SETTING: "+argmini+" "+argminj+" = "+grid[argmini][argminj]);
+
+    // update wave function
+    for (var k = 0; k < tiles.length; k++)
+    {
+       wave[argmini][argminj][k] = (k === selectedTile);
+    }
+
+    return {finished: false, status: status};
+}
+  
+function getTop(cell)
+{
+    if (cell.i-1 >= 0)
+    {
+        var neighbor = {i: cell.i-1, j: cell.j};
+        return neighbor;
+    }
+    return null;
+}
+
+function getLeft(cell)
+{
+    if (cell.j-1 >= 0)
+    {
+        var neighbor = {i: cell.i, j: cell.j-1};
+        return neighbor;
+    }
+    return null;
+}
+
+function getBottom(cell, neighbor)
+{
+    if (cell.i+1 < numRows)
+    {
+        var neighbor = {i: cell.i+1, j: cell.j};
+        return neighbor;
+    }
+    return null;
+}
+
+function getRight(cell, neighbor)
+{
+    if (cell.j+1 < numCols)
+    {
+        var neighbor = {i: cell.i, j : cell.j+1};
+        return neighbor;
+    }
+    return null;
+}
+
+function update(current, neighbor, side)
+{
+    var currentTile = grid[current.i][current.j];
+    var neighborTile = grid[neighbor.i][neighbor.j];
+    if (neighborTile === -1) // update wave function
+    {
+        var sum = 0;
+        for (var k = 0; k < tiles.length; k++)
+        {
+            if (valid[currentTile][side][k] === 0)
+            {
+                wave[neighbor.i][neighbor.j][k] = false;
+            }
+
+            if (wave[neighbor.i][neighbor.j][k] === true)
+            {
+                sum++;
+            }
+        }
+
+        if (sum === 1) // only one choice!
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+function propagate()
+{
+    var changed = false;
+    var newChanges = [];
+    for (var k = 0; k < changes.length; k++)
+    {
+        var current = changes[k];
+
+        // go through the cell's neighbors
+        // update the neighbor's valid potential tiles
+
+        var topCell = getTop(current);
+        var bottomCell = getBottom(current);
+        var leftCell = getLeft(current);
+        var rightCell = getRight(current);
+
+        if (topCell && update(current, topCell, _TOP))
+        {
+            newChanges.push(topCell);
+        }
+        if (leftCell && update(current, leftCell, _LEFT))
+        {
+            newChanges.push(leftCell);
+        }
+        if (bottomCell && update(current, bottomCell, _BOTTOM))
+        {
+            newChanges.push(bottomCell);
+        }
+        if (rightCell && update(current, rightCell, _RIGHT))
+        {
+            newChanges.push(rightCell);
+        }
+    }
+    changes = newChanges;
+    return changed;
+}
+
+function drawTiles() 
+{
+   blendMode(REPLACE);
+   background(255);
+
+   blendMode(MULTIPLY);
+   for (var i = 0; i < numRows; i++)
+   {
+      for (var j = 0; j < numCols; j++)
+      {
+         var x = j * tileSize;
+         var y = i * tileSize;
+         var tileIdx = grid[i][j]; 
+         if (tileIdx === -1) continue;
+
+         image(tiles[tileIdx], x, y, tileSize+1, tileSize+1);
+
+         var c = jitter();
+         fill(c.r, c.g, c.b);
+         noStroke();
+         rect(x,y,tileSize+1, tileSize+1);
+      }
+   }
+}
+
+function draw()
+{
+}
+
+
+</script>
+<body>
+</body>
+</html>
+
+
