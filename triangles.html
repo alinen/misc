@@ -1,0 +1,82 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript" src="colorUtils.js"></script>
+<script language="javascript" type="text/javascript">
+
+var numTriangles = 50;
+var list = [];
+var x1 = 0;
+var y1 = 0;
+var x2 = 0;
+var y2 = 0;
+var x3 = 0;
+var y3 = 0;
+
+function setup() 
+{
+   var width = 500.0;
+   var height = 500.0;
+
+   createCanvas(width, height);
+   console.log("TEST");
+
+   x1 = -width * 0.5;
+   y1 = -height * 0.5;
+   x2 = 0;
+   y2 = height * 0.5;
+   x3 = width * 0.5;
+   y3 = -height * 0.5;
+
+   var size = 4.0;
+   var inc = (4.0 - 0.1)/numTriangles;
+   var c = {r: 255, g: 0, b: 0};
+   list.push({size: size, r: c.r, g: c.g, b: c.b});
+
+   for (var i = 0; i < numTriangles; i++) {
+       size -= inc;
+
+       var hsl = rgb2hsl(c.r, c.g, c.b);
+       hsl.h = (hsl.h + random()*10) % 360;
+       c = hsl2rgb(hsl.h, hsl.s, hsl.l);
+       list.push({size: size, r: c.r, g: c.g, b: c.b});
+   }
+
+   noStroke();
+   background(0);
+}
+
+function draw() 
+{
+    
+    list.sort( function(a,b)  {
+       return b.size - a.size;
+   });
+
+    for (var i = 0; i < numTriangles; i++) {
+        var tri = list[i];
+
+       fill(tri.r, tri.g, tri.b);
+
+       triangle(x1 * tri.size + width * 0.5, y1 * tri.size + height * 0.5, 
+                x2 * tri.size + width * 0.5, y2 * tri.size + height * 0.5,
+                x3 * tri.size + width * 0.5, y3 * tri.size + height * 0.5);
+
+       tri.size = (tri.size + 0.01);
+       if (tri.size > 4) {
+           var hsl = rgb2hsl(tri.r, tri.g, tri.b);
+           hsl.h = (hsl.h + 10) % 360;
+           var c = hsl2rgb(hsl.h, hsl.s, hsl.l);
+           tri.r = c.r; 
+           tri.g = c.g;
+           tri.b = c.b;
+           tri.size = 0.01;
+       }
+    }
+}
+
+</script>
+<body>
+</body>
+</html>
+
+

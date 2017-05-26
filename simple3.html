@@ -1,0 +1,66 @@
+<html>
+	<head>
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<script src="three.min.js"></script>
+		<script src="controls/orbitControls.js"></script>
+		<script>
+			var scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2( 0xcc00cc, 0.1 );
+
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+            camera.position.set(1, 1, 5); 
+
+			var renderer = new THREE.WebGLRenderer({antialias:true});
+            renderer.setClearColor( scene.fog.color );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+            renderer.shadowMap.enabled = true;
+	        renderer.shadowMap.soft = true;
+	        renderer.shadowMap.type = THREE.PCFSoftShadowMap;            
+			document.body.appendChild( renderer.domElement );
+
+            var ambient = new THREE.AmbientLight( 0x222222 );
+            scene.add( ambient );
+
+            var directionalLight = new THREE.DirectionalLight( 0xFFFFFF );
+            directionalLight.position.set( 0, 0, 1 ).normalize();
+            scene.add( directionalLight );
+
+	        var spot1   = new THREE.SpotLight( 0xffffff, 1 );
+	        spot1.position.set( 1, 5, 1);
+	        spot1.target.position.set( 0, 0, 0 );
+		    spot1.shadowCameraNear      = 1;
+		    spot1.shadowCameraFar      = 1024;
+		    spot1.castShadow            = true;
+		    spot1.shadowDarkness        = 0.3;
+		    spot1.shadowBias = 0.0001;
+		    spot1.shadowMapWidth = 2048;
+		    spot1.shadowMapHeight = 2048;
+	        scene.add( spot1 );
+
+            var groundMaterial = new THREE.MeshPhongMaterial({
+	            color: 0xFF00FF,
+	            shading: THREE.SmoothShading,
+	        });
+	        ground = new THREE.Mesh( new THREE.PlaneBufferGeometry(1024, 1024), groundMaterial);
+            ground.position = new THREE.Vector3(0, 0, 0);
+            ground.rotation.x = -Math.PI / 2;
+			scene.add( ground );
+
+            var orbitControls = new THREE.OrbitControls(camera, renderer.domElement);
+			var render = function () {
+				requestAnimationFrame( render );
+                orbitControls.update();
+				renderer.render(scene, camera);
+			};
+
+			render();
+		</script>
+	</body>
+</html>
+

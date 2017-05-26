@@ -1,0 +1,63 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+function drawCircle(centerx, centery, radius)
+{
+   var inc = 1.0;
+   stroke(255, 255, 255, 100);
+   fill(0, 0, 0);
+   strokeWeight(1);
+   noiseDetail(8,0.65);
+   curveTightness(1.5);
+   for (var i = 0; i < 360; i++)
+   {
+       stroke(255, 255-Math.random()*100, 255-Math.random()*100, 100);
+       var theta = i*Math.random();
+       var x = radius * Math.sin(theta) + Math.random() * 50;
+       var y = radius * Math.cos(theta) + Math.random() * 50;
+
+       var p2x = Math.sin(theta + 0.1 * Math.random()); 
+       var p2y = Math.cos(theta + 0.1 * Math.random());
+       var p3x = Math.sin(theta + 0.1 * Math.random());
+       var p3y = Math.cos(theta + 0.1 * Math.random());
+       curve( p2x, p2y,
+             centerx, centery,             
+             centerx + x, centery + y,
+             p3x, p3y);
+             
+       ellipse(centerx + x, centery + y, 10, 10);
+   }     
+}
+
+function setup() 
+{
+   var width = 500.0;
+   var height = 500.0;
+
+   createCanvas(width, height);
+   console.log("TEST");
+
+   background(0);
+   blendMode(ADD);
+
+   var centerx = width/2;
+   var centery = height/2;
+   drawCircle(centerx, centery, 200);
+  
+   centerx = width/2;
+   centery = height/2;
+   drawCircle(centerx, centery, 700);
+}
+
+function draw() 
+{
+
+}
+
+</script>
+<body>
+</body>
+</html>
+
+

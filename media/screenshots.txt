@@ -1,4 +1,8 @@
 screenshots.txt
+TriangleHues.gif
+whatever.png
+dandilion.png
+dots.gif
 truchet9.png
 truchet8.png
 truchet7.png
@@ -34,7 +38,7 @@ Puff4.png
 Puff3.png
 Puff2.png
 Puff.png
-whatever.png
+whateverpuff.png
 yarndrawer.png
 nebula2.png
 birches3.png

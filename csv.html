@@ -1,0 +1,197 @@
+<html>
+<style>
+body {background-color: #FFF2E0;}
+</style>
+<object data="./assets/abstract.svg" type="image/svg+xml" id="owlsvg" width="100px" style="margin: 1em;"></object>
+<script language="javascript" type="text/javascript" src="colorUtils.js"></script>
+<script language="javascript" type="text/javascript">
+
+var i = 0;
+var rainbow = [
+{r:255, g:0, b:0},
+{r:255, g:93, b:0},
+{r:255, g:245, b:0},
+{r:135, g:255, b:0},
+{r:0, g:178, b:32},
+{r:0, g:141, b:153},
+{r:0, g:34, b:255},
+{r:0, g:3, b:189},
+{r:94, g:0, b:201},
+{r:136, g:0, b:205},
+{r:211, g:0, b:255},
+{r:255, g:0, b:159},
+{r:190, g:0, b:58}
+];
+
+var patterns = [
+   {name: "HStripe", fn: makeHStripe},
+   {name: "VThin", fn: makeVThinStripe},
+   {name: "VStripe", fn: makeVStripe},
+   {name: "Chevron", fn: makeChevron},
+   {name: "Dots", fn: makeDots},
+   {name: "Xs", fn: makeXs},
+   {name: "Vs", fn: makeVs}
+];
+
+function makeHStripe(color1, color2)
+{
+   var patternStr = '<pattern id="HStripe" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">';
+   patternStr += '<rect x="0" y="0" width="20" height="10" style="stroke: none; fill: '+rgbToHex(color1.r, color1.g, color1.b)+'" />';
+   patternStr += '<rect x="0" y="10" width="20" height="10" style="stroke: none; fill: '+rgbToHex(color2.r, color2.g, color2.b)+'" />';
+   patternStr += '</pattern>';    
+   return patternStr;
+}
+
+function makeVThinStripe(color1, color2)
+{
+   var patternStr = '<pattern id="VThin" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">';
+   patternStr += '<rect x="0" y="0" width="15" height="20" style="stroke: none; fill: '+rgbToHex(color1.r, color1.g, color1.b)+'" />';
+   patternStr += '<rect x="15" y="0" width="5" height="20" style="stroke: none; fill: '+rgbToHex(color2.r, color2.g, color2.b)+'" />';
+   patternStr += '</pattern>';    
+   return patternStr;
+}
+
+function makeVStripe(color1, color2)
+{
+   var patternStr = '<pattern id="VStripe" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">';
+   patternStr += '<rect x="0" y="0" width="10" height="20" style="stroke: none; fill: '+rgbToHex(color1.r, color1.g, color1.b)+'" />';
+   patternStr += '<rect x="10" y="0" width="10" height="20" style="stroke: none; fill: '+rgbToHex(color2.r, color2.g, color2.b)+'" />';
+   patternStr += '</pattern>';    
+   return patternStr;
+}
+
+function makeChevron(color1, color2)
+{
+   var patternStr = '<pattern id="Chevron" x="0" y="0" width="20" height="20" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">';
+   patternStr += '<rect x="0" y="0" width="20" height="20" style="stroke: none; fill: '+rgbToHex(color1.r, color1.g, color1.b)+'" />';
+   patternStr += '<rect x="0" y="-10" width="20" height="20" style="stroke: none; fill: '+rgbToHex(color2.r, color2.g, color2.b)+'" transform="rotate(45 0 0)" />';
+   patternStr += '</pattern>';
+   return patternStr;
+}
+
+function makeDots(color1, color2)
+{
+   var patternStr = '<pattern id="Dots" x="10" y="10" width="20" height="20" patternUnits="userSpaceOnUse" >';
+   patternStr += '<rect x="0" cy="0" width="20" height="20" style="stroke: none; fill: '+rgbToHex(color1.r, color1.g, color1.b)+'" />';
+   patternStr += '<circle cx="10" cy="10" r="6" style="stroke: none; fill: '+rgbToHex(color2.r, color2.g, color2.b)+'" />';
+   patternStr += '</pattern>';
+   return patternStr;
+}
+
+function makeXs(color1, color2)
+{
+   var patternStr = '<pattern id="Xs" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse" >';
+   patternStr += '<rect x="0" y="0" width="20" height="20" style="stroke: none; fill: '+rgbToHex(color1.r, color1.g, color1.b)+'" />';
+   patternStr += '<rect x="10" y="0" width="2" height="10" style="stroke: none; fill: '+rgbToHex(color2.r, color2.g, color2.b)+'" transform="rotate(20 10 0)" />';
+   patternStr += '<rect x="10" y="0" width="2" height="10" style="stroke: none; fill: '+rgbToHex(color2.r, color2.g, color2.b)+'" transform="rotate(-20 10 0)"/>';
+   patternStr += '</pattern>';
+   return patternStr;
+}
+
+function makeVs(color1, color2)
+{
+   var patternStr = '<pattern id="Vs" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse" >';
+   patternStr += '<rect x="0" y="0" width="20" height="20" style="stroke: none; fill: '+rgbToHex(color1.r, color1.g, color1.b)+'" />';
+   patternStr += '<rect x="10" cy="0" width="3" height="20" style="stroke: none; fill: '+rgbToHex(color2.r, color2.g, color2.b)+'" transform="rotate(45 10 10)" />';
+   patternStr += '<rect x="10" cy="0" width="3" height="20" style="stroke: none; fill: '+rgbToHex(color2.r, color2.g, color2.b)+'" transform="rotate(-45 10 10)" />';
+   patternStr += '</pattern>';
+   return patternStr;
+}
+
+function print(domRoot, indent)
+{
+    for (var i = 0; i < domRoot.childNodes.length; i++)
+    {
+        var domChild = domRoot.childNodes[i];
+        if (domChild.id !== undefined && domChild.id !== "")
+        {
+            console.log(indent+domChild.id);
+        }
+        print(domChild, indent + "  ");
+    }
+}
+
+function pseudo()
+{
+    return Math.max(0.2, Math.random());
+}
+
+function randomizeChildren(domRoot, defs, hsl)
+{
+    for (var i = 0; i < domRoot.childNodes.length; i++)
+    {
+        var domChild = domRoot.childNodes[i];
+        if (domChild.id !== undefined && domChild.id !== "")
+        {
+            var currentStyle = domChild.getAttribute("style");
+            if (domChild.id.indexOf("Eye") === -1 && currentStyle)
+            {
+                var hue = hsl.h + pseudo()*100 - 50;
+                if (hue < 0) hue = 360 + hue;
+                var lum = Math.min(0.6,  Math.max(0.3, hsl.l+Math.random()-0.5));
+
+                var color = hsl2rgb(hue, hsl.s, lum);
+                //console.log("HSV "+hue+" "+hsl.s+" "+hsl.l);
+
+                if (domChild.id.indexOf("eyebrow") === -1 && domChild.id.indexOf("nose") === -1)
+                {
+                    hue = hsl.h + pseudo()*100 - 50;
+                    if (hue < 0) hue = 360 + hue;
+                    lum = Math.min(0.6,  Math.max(0.3, hsl.l+Math.random()-0.5));
+                    var nextColor = hsl2rgb(hue, hsl.s, lum);
+
+                    var randomIdx = Math.floor(pseudo() * patterns.length);
+                    var patternFn = patterns[randomIdx].fn;
+                    defs.innerHTML += patternFn(color, nextColor);
+ 
+                    //console.log(rgbToHex(color.r,color.g,color.b)+" "+rgbToHex(nextColor.r,nextColor.g,nextColor.b));
+                    //console.log("HSV "+hue+" "+hsl.s+" "+hsl.l);
+                    domChild.setAttribute("style", "opacity:1;fill: url(#"+patterns[randomIdx].name+");");
+                }
+                else
+                {
+                    domChild.setAttribute("style", "opacity:1; fill: "+rgbToHex(color.r, color.g, color.b)+";");
+                }
+            }
+            randomizeChildren(domChild, defs, hsl);
+        }
+    }
+}
+
+function randomize(svgDoc)
+{
+    var defs = svgDoc.getElementsByTagName("defs");
+    var color = rainbow[i];
+    var hsl = rgb2hsl(color.r, color.g, color.b);
+    randomizeChildren(svgDoc, defs[0], hsl);
+    i = (i + 1) % rainbow.length;
+}
+
+function keyPressed(e)
+{
+    var a = document.getElementById("owlsvg");
+    var b = a.cloneNode(a);
+    b.onload = function() {
+        var svgDoc = b.contentDocument;
+        randomize(svgDoc);
+    }
+
+    var aParent = a.parentNode;
+    aParent.appendChild(b);
+}
+
+window.onload =  function() 
+{
+    var a = document.getElementById("owlsvg");
+    var svgDoc = a.contentDocument;
+	var svgItem = svgDoc.getElementById("leftEye");
+
+    print(svgDoc, " ");
+    randomize(svgDoc);
+    window.addEventListener("keyup", keyPressed, false);
+}
+
+</script>
+<body>
+</body>
+</html>
