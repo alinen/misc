@@ -1,0 +1,182 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var lines = [];
+var width = 500.0;
+var height = 500.0;
+var count = 0;
+var maxLines = 500;
+var aa = 50;
+var ww = 50;
+var t = 0;
+
+function intersectionTest(x1, y1, bx, by) 
+{
+    var tx = (width - x1)/bx;
+    if (tx < 0) 
+    {
+        tx = -x1/bx;
+    }
+    var ty = (height - y1)/by;
+    if (ty < 0) 
+    {
+        ty = -y1/by;
+    }
+    var mint = Math.min(tx, ty);
+
+    var mint1 = 0;
+    var mini = -1;
+    var minx = x1 + mint * bx;
+    var miny = y1 + mint * by;
+    for (var i = 0; i < lines.length; i++)
+    {
+        var line = lines[i];
+        var ax = line.x2 - line.x1;
+        var ay = line.y2 - line.y1;
+        var vx = x1 - line.x1;
+        var vy = y1 - line.y1;
+
+        var len = Math.sqrt(ax*ax + ay*ay);
+
+        var t2 = (vx * ay - ax * vy) / (ax * by - ay * bx);
+        if (Math.abs(ay) > 0)
+        {
+            t1 = (vy + t2 * by)/ay;
+        }
+        else 
+        {
+            t1 = (vx + t2 * bx)/ax;
+        }
+        if (t2 > 1 && t1 > 0  && t1 < 1 && t2 < mint) 
+        {
+            minx = x1 + t2 * bx;
+            miny = y1 + t2 * by;
+            mint = t2;
+            mint1 = t1;
+            mini = i;
+        }
+    } 
+    if (mini !== -1) 
+    {
+        var test1x = minx;
+        var test1y = miny;
+
+        var line = lines[mini];
+        var ax = line.x2 - line.x1;
+        var ay = line.y2 - line.y1;
+        var test2x = line.x1 + mint1 * ax;
+        var test2y = line.y1 + mint1 * ay;
+
+        //console.log(test1x+" "+test2x);
+        //console.log(test1y+" "+test2y);
+        //console.log(mint+" "+mint1+" "+test2x+" "+test2y);
+    }
+    return {x:minx, y:miny, t:mint};
+}
+
+function addLine(x1, y1, x2, y2)
+{
+    var dirx = x2-x1;
+    var diry = y2-y1;
+    var len = Math.sqrt((dirx)*(dirx)+(diry)*(diry));
+    lines.push({x1:x1, y1:y1, x2: x2, y2:y2, len: len, dirx:dirx/len, diry:diry/len, r: 255*random()});
+}
+
+function setup() 
+{
+    width = 500.0;
+    height = 500.0;
+
+    createCanvas(width, height);
+
+    // tests
+    //addLine(200, 250, 260, 250);
+    //var test1 = intersectionTest(180, 260, 0, -1);
+    //addLine(180, 260, test1.x, test1.y);
+    //var test2 = intersectionTest(210, 270, 0, -1);
+    //addLine(210, 370, test2.x, test2.y);
+    //var test3 = intersectionTest(100, 300, 1, 0);
+    //addLine(100, 300, test3.x, test3.y);
+
+    var y1 = random() * height;
+    var y2 = random() * height;
+    var x1 = 0;
+    var x2 = width;
+    addLine(x1, y1, x2, y2);
+
+    var y1 = random() * height;
+    var y2 = random() * height;
+    var x1 = random() * width;
+    var x2 = random() * width;
+    addLine(x1, y1, x2, y2);
+
+    var y1 = 0;
+    var y2 = height;
+    var x1 = random() * width;
+    var x2 = random() * width;
+    addLine(x1, y1, x2, y2);
+    
+    while (lines.length < maxLines) 
+    {
+       // subdivide
+       var idx = Math.floor(random() * lines.length);
+       
+       var dirx = lines[idx].dirx;
+       var diry = lines[idx].diry;
+
+       var closest;
+       var t = random() * lines[idx].len;
+       x1 = lines[idx].x1 + t * dirx;
+       y1 = lines[idx].y1 + t * diry;
+       closest = intersectionTest(x1, y1, -diry, dirx);
+       if (closest.t > 10)
+       {
+          addLine(x1, y1, closest.x, closest.y);
+       }
+
+       var t = random() * lines[idx].len;
+       x1 = lines[idx].x1 + t * dirx;
+       y1 = lines[idx].y1 + t * diry;
+       closest = intersectionTest(x1, y1, diry, -dirx);
+       if (closest.t > 10)
+       {
+          addLine(x1, y1, closest.x, closest.y);
+       }
+    }
+}
+
+function draw() 
+{
+   background(255);
+   for (var count = 0; count < lines.length; count++) 
+   {
+       stroke(lines[count].r, 0, 0, aa);
+       strokeWeight(ww);
+       var x1 = lines[count].x1;
+       var y1 = lines[count].y1;
+       var x2 = lines[count].x2;
+       var y2 = lines[count].y2;
+       
+       /*
+       var len = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+       if (t < lines[count].len) 
+       {
+           x2 = lines[count].x1 + t * lines[count].dirx;
+           y2 = lines[count].y1 + t * lines[count].diry;
+       }*/
+       line(x1, y1, x2, y2);
+   }
+   aa += 10;
+   aa = min(200, aa);
+   ww -= 10;
+   ww = max(ww, 1);
+   t += 2;
+}
+
+</script>
+<body>
+</body>
+</html>
+
+

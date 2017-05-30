@@ -1,0 +1,62 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+
+var width = 500.0;
+var height = 500.0;
+var x1 = 0;
+var y1 = 0;
+var x2 = width;
+var y2 = height;
+var maxIterations = 5;
+var r = 50;
+
+function subdivide(_x1, _y1, _x2, _y2, count)
+{
+    if (count >= maxIterations) return;
+
+    if (count === maxIterations - 1)
+    {
+        var dice = random();
+        if (dice < 0.5)
+        {
+            fill(r,0,0);
+            r += 1;
+        }
+        else
+        {
+            fill(0,0,0);
+        }
+        quad(_x1, _y1, _x1, _y2, _x2, _y2, _x2, _y1);
+        //console.log(_x1+" "+_y1+" "+ _x1+" "+ _y2+" "+ _x2+" "+ _y2+" "+ _x2+" "+ _y1);
+    }
+
+    var x = _x1 + random() * (_x2 - _x1);
+    var y = _y1 + random() * (_y2 - _y1);
+    subdivide(_x1, _y1, x, y, count + 1);
+    subdivide(x, _y1, _x2, y, count + 1);
+    subdivide(_x1, y, x, _y2, count + 1);
+    subdivide(x, y, _x2, _y2, count + 1);
+}
+
+function setup() 
+{
+    width = 500.0;
+    height = 500.0;
+
+    createCanvas(width, height);
+    background(255);
+    subdivide(x1, y1, x2, y2, 0);
+}
+
+function draw() 
+{
+}
+
+</script>
+<body>
+</body>
+</html>
+
+

@@ -1,0 +1,88 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var x1 = 0;
+var y1 = 0;
+var x2 = 0;
+var y2 = 0;
+var width = 500.0;
+var height = 500.0;
+var count = 0;
+var maxIterations = 200;
+var aa = 10;
+var ww = 50;
+function setup() 
+{
+   width = 500.0;
+   height = 500.0;
+
+   createCanvas(width, height);
+   y1 = random() * height;
+   y2 = random() * height;
+   x1 = 0;
+   x2 = width;
+   background(255);
+}
+
+function draw() 
+{
+   count = count + 1;
+   if (count < maxIterations) 
+   {
+       stroke(255*random(), 0, 0, aa);
+       aa += 5;
+       strokeWeight(ww);
+       ww -= 1;
+       ww = max(ww, 1);
+       line(x1, y1, x2, y2);
+
+       // subdivide
+       var dirx = x2-x1;
+       var diry = y2-y1;
+       var len = Math.sqrt((dirx)*(dirx)+(diry)*(diry));
+       /*
+       strokeWeight(1.0);
+       for (var i = 0; i < len; i++)
+       {
+           var x = x1 + i * dirx / len;
+           var y = y1 + i * diry / len;
+           var tmp = dirx;
+           dirx = -diry;
+           diry = tmp;
+           var ll = random() * 50;
+           stroke(255,255,0);
+           line(x, y, ll*dirx/len+x, ll*diry/len+y);
+       }*/
+       
+       var t = random() * len;
+       x1 = x1 + t * dirx / len;
+       y1 = y1 + t * diry / len;
+
+       var tmp = dirx;
+       dirx = -diry;
+       diry = tmp;
+       var tx = (width - x1)/dirx;
+       if (tx < 0) 
+       {
+           tx = -x1/dirx;
+       }
+       var ty = (height - y1)/diry;
+       if (ty < 0) 
+       {
+           ty = -y1/diry;
+       }
+       var t = Math.min(tx, ty);
+
+       x2 = x1 + t * dirx ;
+       y2 = y1 + t * diry ;
+       console.log(x1+" "+y1+" "+x2+" "+y2);
+   }
+}
+
+</script>
+<body>
+</body>
+</html>
+
+

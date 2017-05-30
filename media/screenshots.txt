@@ -1,4 +1,9 @@
 screenshots.txt
+subdivide1.png
+redblacksquares1.png
+redblacksquares.png
+pipes1.png
+pipes.png
 TriangleHues.gif
 whatever.png
 dandilion.png
