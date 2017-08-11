@@ -1,0 +1,113 @@
+<html>
+<script language="javascript" type="text/javascript" src="gl-matrix-2.0-min.js"></script>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+// local rotations around Z axis
+var R0 = 45;
+var R1 = -45;
+var R2 = -45;
+var R3 = 0;
+
+// local offsets
+var d0 = vec4.fromValues(100,250,0,1);
+var d1 = vec4.fromValues(100,0,0,1);
+var d2 = vec4.fromValues(100,0,0,1);
+var d3 = vec4.fromValues(100,0,0,1);
+
+// local matrices
+var F0 = mat4.create();
+var F1 = mat4.create();
+var F2 = mat4.create();
+var F3 = mat4.create();
+
+// local rotations
+var q0 = quat.create();
+var q1 = quat.create();
+var q2 = quat.create();
+var q3 = quat.create();
+
+// local to global matrices
+var F0G = mat4.create(); // from frame 1 to globagl-matrix-2.0-minl
+var F1G = mat4.create(); // from frame 1 to global
+var F2G = mat4.create(); // from frame 1 to global
+var F3G = mat4.create(); // from frame 1 to global
+
+// global joint positions
+// note that d0G = d0, so we don't compute it
+var d1G = vec4.create();
+var d2G = vec4.create();
+var d3G = vec4.create();
+
+// helpers
+var axis = vec3.fromValues(0,0,1);
+var zero = vec4.fromValues(0,0,0,1);
+var Deg2Rad = Math.PI / 180.0;
+
+function setup() 
+{
+   var width = 500.0;
+   var height = 500.0;
+
+   createCanvas(width, height);
+   console.log("TEST");
+}
+
+function IK()
+{
+    var r = vec4.distance(d0, d3G);
+    console.log("r = "+r);
+}
+
+function FK()
+{
+    quat.setAxisAngle(q0, axis, R0 * Deg2Rad);
+    mat4.fromRotationTranslation(F0, q0, d0);
+    F0G = F0;
+
+    quat.setAxisAngle(q1, axis, R1 * Deg2Rad);
+    mat4.fromRotationTranslation(F1, q1, d1);
+    mat4.multiply(F1G, F0G, F1);
+
+    quat.setAxisAngle(q2, axis, R2 * Deg2Rad);
+    mat4.fromRotationTranslation(F2, q2, d2);
+    mat4.multiply(F2G, F1G, F2);
+
+    quat.setAxisAngle(q3, axis, R3 * Deg2Rad);
+    mat4.fromRotationTranslation(F3, q3, d3);
+    mat4.multiply(F3G, F2G, F3);
+
+    vec4.transformMat4(d1G, zero, F1G);
+    vec4.transformMat4(d2G, zero, F2G);
+    vec4.transformMat4(d3G, zero, F3G);
+}
+
+function draw() 
+{
+   background(200);
+
+   stroke(255,0,0);
+   line(10, 10, 60, 10);
+
+   stroke(0,255,0);
+   line(10, 10, 10, 60);
+
+   FK();
+   IK();
+
+   fill(0, 0, 0);
+   stroke(0, 0, 0);
+   ellipse(d0[0],  d0[1], 10, 10);
+   ellipse(d1G[0], d1G[1], 10, 10);
+   ellipse(d2G[0], d2G[1], 10, 10);
+   ellipse(d3G[0], d3G[1], 10, 10);
+
+   line(d0[0],  d0[1],  d1G[0], d1G[1]);
+   line(d1G[0], d1G[1], d2G[0], d2G[1]);
+   line(d2G[0], d2G[1], d3G[0], d3G[1]);
+}
+
+</script>
+<body>
+</body>
+</html>
