@@ -75,12 +75,12 @@ function intersectionTest(x1, y1, bx, by)
     return {x:minx, y:miny, t:mint};
 }
 
-function addLine(x1, y1, x2, y2)
+function addLine(x1, y1, x2, y2, r, g, b, a)
 {
     var dirx = x2-x1;
     var diry = y2-y1;
     var len = Math.sqrt((dirx)*(dirx)+(diry)*(diry));
-    lines.push({x1:x1, y1:y1, x2: x2, y2:y2, len: len, dirx:dirx/len, diry:diry/len, r: 255*random()});
+    lines.push({x1:x1, y1:y1, x2: x2, y2:y2, len: len, dirx:dirx/len, diry:diry/len, r: r, g: g, b: b, a: a});
 }
 
 function setup() 
@@ -103,19 +103,19 @@ function setup()
     var y2 = random() * height;
     var x1 = 0;
     var x2 = width;
-    addLine(x1, y1, x2, y2);
+    addLine(x1, y1, x2, y2, 255*random(), 0, 0, 255);
 
     var y1 = random() * height;
     var y2 = random() * height;
     var x1 = random() * width;
     var x2 = random() * width;
-    addLine(x1, y1, x2, y2);
+    addLine(x1, y1, x2, y2, 255*random(), 0, 0, 255);
 
     var y1 = 0;
     var y2 = height;
     var x1 = random() * width;
     var x2 = random() * width;
-    addLine(x1, y1, x2, y2);
+    addLine(x1, y1, x2, y2, 255*random(), 0, 0, 255);
     
     while (lines.length < maxLines) 
     {
@@ -141,9 +141,33 @@ function setup()
        closest = intersectionTest(x1, y1, diry, -dirx);
        if (closest.t > 10)
        {
-          addLine(x1, y1, closest.x, closest.y);
+          addLine(x1, y1, closest.x, closest.y, 255*random(), 0, 0, 255);
        }
     }
+
+    var numLines = lines.length;
+    for (var count = 0; count < numLines; count++) 
+    {
+       var x1 = lines[count].x1;
+       var y1 = lines[count].y1;
+       var x2 = lines[count].x2;
+       var y2 = lines[count].y2;
+       
+       var len = Math.sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+       for (var i = 0; i < len; i++)
+       {
+           var g = 100+random()*50;
+           var dirx = lines[count].dirx;
+           var diry = lines[count].diry;
+           var closest = intersectionTest(x1, y1, -diry, dirx);
+           var x = x1 + i * dirx;
+           var y = y1 + i * diry;
+           var l = closest.t * random() * closest.t;
+           var xx = x - l * diry;
+           var yy = y + l * dirx;
+           addLine(x, y, xx, yy, 255, g, 0, 100);
+       }
+   }
 }
 
 function draw() 
@@ -151,7 +175,7 @@ function draw()
    background(255);
    for (var count = 0; count < lines.length; count++) 
    {
-       stroke(lines[count].r, 0, 0, 250);
+       stroke(lines[count].r, lines[count].g, lines[count].b, lines[count].a);
        strokeWeight(1);
        var x1 = lines[count].x1;
        var y1 = lines[count].y1;
@@ -165,23 +189,8 @@ function draw()
            y2 = lines[count].y1 + t * lines[count].diry;
        } 
        line(x1, y1, x2, y2);
-
-       for (var i = 0; i < len; i++)
-       {
-           //stroke(255,100+random()*50,0,100);
-           stroke(255,100,0,100);
-           var dirx = lines[count].dirx;
-           var diry = lines[count].diry;
-           var closest = intersectionTest(x1, y1, -diry, dirx);
-           var x = x1 + i * dirx;
-           var y = y1 + i * diry;
-           var l = closest.t *0.4; //random() * closest.t;
-           var xx = x - l * diry;
-           var yy = y + l * dirx;
-           line(x, y, xx, yy);
-       }
    }
-   t += 2;
+   t += 20;
 }
 
 </script>

@@ -1,4 +1,12 @@
 screenshots.txt
+curiousSphere2.gif
+curiousSphere1.gif
+nightmareHands.gif
+constellations.gif
+stars.png
+subdivide2.png
+rainbows2.gif
+rainbows2.png
 subdivide1.png
 redblacksquares1.png
 redblacksquares.png
