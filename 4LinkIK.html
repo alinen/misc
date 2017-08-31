@@ -44,6 +44,9 @@ var axis = vec3.fromValues(0,0,1);
 var zero = vec4.fromValues(0,0,0,1);
 var Deg2Rad = Math.PI / 180.0;
 
+// goalPos
+var goalPos = vec4.fromValues(0,0,0,1);
+
 function setup() 
 {
    var width = 500.0;
@@ -51,12 +54,14 @@ function setup()
 
    createCanvas(width, height);
    console.log("TEST");
+
+   FK();
+   vec4.copy(goalPos, d3G);
 }
 
 function IK()
 {
     var r = vec4.distance(d0, d3G);
-    console.log("r = "+r);
 }
 
 function FK()
@@ -86,6 +91,16 @@ function draw()
 {
    background(200);
 
+   if (mouseIsPressed && mouseButton == LEFT) 
+   {
+      goalPos[0] = mouseX;
+      goalPos[1] = mouseY;
+   }
+
+   noStroke();
+   fill(255,0,0,);
+   ellipse(goalPos[0], goalPos[1], 15, 15);
+
    stroke(255,0,0);
    line(10, 10, 60, 10);
 
@@ -105,6 +120,7 @@ function draw()
    line(d0[0],  d0[1],  d1G[0], d1G[1]);
    line(d1G[0], d1G[1], d2G[0], d2G[1]);
    line(d2G[0], d2G[1], d3G[0], d3G[1]);
+
 }
 
 </script>
