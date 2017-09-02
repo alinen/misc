@@ -4,40 +4,34 @@
 <script language="javascript" type="text/javascript">
 
 // local rotations around Z axis
-var R0 = 0; //45;
-var R1 = 0; //-45;
-var R2 = -45;
-var R3 = 0;
+var R0 = 45; 
+var R1 = -45; 
+var R2 = 0;
 
 // local offsets
 var d0 = vec4.fromValues(100,250,0,1);
 var d1 = vec4.fromValues(100,0,0,1);
 var d2 = vec4.fromValues(100,0,0,1);
-var d3 = vec4.fromValues(100,0,0,1);
 
 // local matrices
 var F0 = mat4.create();
 var F1 = mat4.create();
 var F2 = mat4.create();
-var F3 = mat4.create();
 
 // local rotations
 var q0 = quat.create();
 var q1 = quat.create();
 var q2 = quat.create();
-var q3 = quat.create();
 
 // local to global matrices
 var F0G = mat4.create(); // from frame 0 to globagl-matrix-2.0-minl
 var F1G = mat4.create(); // from frame 1 to global
 var F2G = mat4.create(); // from frame 2 to global
-var F3G = mat4.create(); // from frame 3 to global
 
 // global joint positions
 // note that d0G = d0, so we don't compute it
 var d1G = vec4.create();
 var d2G = vec4.create();
-var d3G = vec4.create();
 
 // helpers
 var axis = vec3.fromValues(0,0,1);
@@ -57,7 +51,7 @@ function setup()
    console.log("TEST");
 
    FK();
-   vec4.copy(goalPos, d3G);
+   vec4.copy(goalPos, d2G);
    goalPos[1] += 10;
 
    FK();
@@ -66,53 +60,43 @@ function setup()
 
 function Nudge(jointPos, magicNum = 1.0)
 {
-    var rDir = vec3.fromValues(d3G[0]-jointPos[0], d3G[1]-jointPos[1], d3G[2]-jointPos[2]);
-    var eDir = vec3.fromValues(goalPos[0]-d3G[0], goalPos[1]-d3G[1], goalPos[2]-d3G[2]);
+    var rDir = vec3.fromValues(d2G[0]-jointPos[0], d2G[1]-jointPos[1], d2G[2]-jointPos[2]);
+    var eDir = vec3.fromValues(goalPos[0]-d2G[0], goalPos[1]-d2G[1], goalPos[2]-d2G[2]);
 
     var axis = vec3.create();
     vec3.cross(axis, rDir, eDir);
 
     var denom = vec3.dot(rDir, rDir) + vec3.dot(rDir, eDir);
-    var angle = Math.atan2(axis[2], denom) * Rad2Deg;   // 3D implementation would use len(axis)
+    var angle = Math.atan2(axis[2], denom) * Rad2Deg;   // 3D implementation would use len(axis)    
 
     return angle;
 }
 
 function IK()
 {
-    var angle;
-    var distance = vec4.distance(d3G, goalPos);
-    for (var i = 0; i < 100 && distance > 1; i++)
-    {
-        angle = Nudge(d0, 0.5); 
-        R0 = R0 + angle; // note: angle is relative
-        FK();
+    var r = vec4.distance(goalPos, d0);
+    var l1 = vec4.distance(d0, d1G);
+    var l2 = vec4.distance(d1G, d2G);
 
-        angle = Nudge(d1G, 0.5);
-        R1 = R1 + angle;
-        if (R1 > 0) R1 = -R1; // finger joints can only bend one way!
-        FK();
+    // compute R1
+    var tmp = (r * r - l1 * l1 - l2 * l2) / (-2.0 * l1 * l2);
+    tmp = Math.min(1.0, Math.max(-1.0, tmp));
+    var phi = Math.acos(tmp);
+    var theta2z = phi - Math.PI;
+    //var theta2z1 = asin(l2 * sin(phi) / r);
+    R1 = theta2z * Rad2Deg; // "elbow" rot
+    FK();
 
-        angle = Nudge(d2G, 0.5);
-        R2 = R2 + angle;
-        if (R2 > 0) R2 = -R2; // finger joints can only bend one way!
-        FK();
-
-        distance = vec4.distance(d3G, goalPos);
-    }
-
-    // handle angle constraints
-    // want 1st knuckle to bend more than 2nd knuckle
-    var sumAngles = R1 + R2;
-    R1 = Math.min(0, Math.max(-90, 0.66 * sumAngles));
-    R2 = sumAngles - R1;
+    // R0
+    var angle = Nudge(d0);
+    R0 = R0 + angle; // note: angle is relative
+    FK();
 
     // test
     /*
-    FK();
     var rDir = vec4.create();
-    console.log(vec4.distance(d3G, d1G) + " " + vec4.distance(goalPos, d1G)); // should be equal!
-    console.log(vec4.distance(d3G, d0) + " " + vec4.distance(goalPos, d0)); // should be equal!
+    console.log(vec4.distance(d2G, d1G) + " " + vec4.distance(goalPos, d1G)); // should be equal!
+    console.log(vec4.distance(d2G, d0) + " " + vec4.distance(goalPos, d0)); // should be equal!
     console.log(R0+" "+R1+" "+R2);
     */
 }
@@ -131,13 +115,8 @@ function FK()
     mat4.fromRotationTranslation(F2, q2, d2);
     mat4.multiply(F2G, F1G, F2);
 
-    quat.setAxisAngle(q3, axis, R3 * Deg2Rad);
-    mat4.fromRotationTranslation(F3, q3, d3);
-    mat4.multiply(F3G, F2G, F3);
-
     vec4.transformMat4(d1G, zero, F1G);
     vec4.transformMat4(d2G, zero, F2G);
-    vec4.transformMat4(d3G, zero, F3G);
 }
 
 function draw() 
@@ -160,7 +139,6 @@ function draw()
    stroke(0,255,0);
    line(10, 10, 10, 60);
 
-   //FK();
    IK();
 
    fill(0, 0, 0);
@@ -168,11 +146,9 @@ function draw()
    ellipse(d0[0],  d0[1], 10, 10);
    ellipse(d1G[0], d1G[1], 10, 10);
    ellipse(d2G[0], d2G[1], 10, 10);
-   ellipse(d3G[0], d3G[1], 10, 10);
 
    line(d0[0],  d0[1],  d1G[0], d1G[1]);
    line(d1G[0], d1G[1], d2G[0], d2G[1]);
-   line(d2G[0], d2G[1], d3G[0], d3G[1]);
 
 }
 
