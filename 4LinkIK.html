@@ -80,41 +80,52 @@ function Nudge(jointPos, magicNum = 1.0)
 
 function IK()
 {
-    var angle;
-    var distance = vec4.distance(d3G, goalPos);
-    for (var i = 0; i < 100 && distance > 1; i++)
-    {
-        angle = Nudge(d0, 0.5); 
-        R0 = R0 + angle; // note: angle is relative
-        FK();
+    var c = vec4.distance(d0, d1G); // l1
+    var a = vec4.distance(d1G, d2G); // l2
+    var d = vec4.distance(d2G, d3G); // l3
+    var b = vec4.distance(d0, goalPos); // r
 
-        angle = Nudge(d1G, 0.5);
-        R1 = R1 + angle;
-        if (R1 > 0) R1 = -R1; // finger joints can only bend one way!
-        FK();
+    var cos1 = ((b-a)*(b-a) + c*c - d*d)/(2*(b-a)*c);
+    var cos2 = ((b-a)*(b-a) - c*c + d*d)/(2*(b-a)*c);
+    var cos3 = ((b-a)*(b-a) - c*c + d*d)/(2*(b-a)*c);
+    var cos4 = ((b-a)*(b-a) + c*c - d*d)/(2*(b-a)*c);
 
-        angle = Nudge(d2G, 0.5);
-        R2 = R2 + angle;
-        if (R2 > 0) R2 = -R2; // finger joints can only bend one way!
-        FK();
+    cos1 =  Math.min(1.0, Math.max(-1.0, cos1));
+    cos2 =  Math.min(1.0, Math.max(-1.0, cos2));
+    cos3 =  Math.min(1.0, Math.max(-1.0, cos3));
+    cos4 =  Math.min(1.0, Math.max(-1.0, cos4));
 
-        distance = vec4.distance(d3G, goalPos);
-    }
+    var theta1 = Math.acos(cos1);
+    var theta2 = Math.acos(cos2);
+    var theta3 = Math.acos(cos3);
+    var theta4 = Math.acos(cos4);
+
+    var test = theta1 + theta2 + (Math.PI - theta3) + (Math.PI - theta4);
+    console.log("test = "+test*Rad2Deg);
+
+    R0 = theta1 * Rad2Deg;
+    R1 = theta2 * Rad2Deg;
+    R2 = theta3 * Rad2Deg;
+    FK();
 
     // handle angle constraints
     // want 1st knuckle to bend more than 2nd knuckle
     var sumAngles = R1 + R2;
-    R1 = Math.min(0, Math.max(-90, 0.66 * sumAngles));
+    R1 = Math.max(0, Math.min(90, 0.66 * sumAngles));
     R2 = sumAngles - R1;
+    FK();
 
+    // R0
+    var angle = Nudge(d0);
+    R0 = R0 + angle; // note: angle is relative
+    FK();
+    
     // test
-    /*
     FK();
     var rDir = vec4.create();
     console.log(vec4.distance(d3G, d1G) + " " + vec4.distance(goalPos, d1G)); // should be equal!
     console.log(vec4.distance(d3G, d0) + " " + vec4.distance(goalPos, d0)); // should be equal!
     console.log(R0+" "+R1+" "+R2);
-    */
 }
 
 function FK()
