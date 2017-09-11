@@ -12,8 +12,8 @@ var R3 = 0;
 // local offsets
 var d0 = vec4.fromValues(100,250,0,1);
 var d1 = vec4.fromValues(100,0,0,1);
-var d2 = vec4.fromValues(100,0,0,1);
-var d3 = vec4.fromValues(100,0,0,1);
+var d2 = vec4.fromValues(50,0,0,1);
+var d3 = vec4.fromValues(25,0,0,1);
 
 // local matrices
 var F0 = mat4.create();
@@ -80,39 +80,31 @@ function Nudge(jointPos, magicNum = 1.0)
 
 function IK()
 {
-    var c = vec4.distance(d0, d1G); // l1
-    var a = vec4.distance(d1G, d2G); // l2
-    var d = vec4.distance(d2G, d3G); // l3
-    var b = vec4.distance(d0, goalPos); // r
+    var r = vec4.distance(goalPos, d0);
+    var l1 = vec4.distance(d0, d1G);
+    var l2 = vec4.distance(d1G, d2G);
+    var l3 = vec4.distance(d2G, d3G);
+    var x = r - l1;
+    if (x < 0) return; // handle later
 
-    var cos1 = ((b-a)*(b-a) + c*c - d*d)/(2*(b-a)*c);
-    var cos2 = ((b-a)*(b-a) - c*c + d*d)/(2*(b-a)*c);
-    var cos3 = ((b-a)*(b-a) - c*c + d*d)/(2*(b-a)*c);
-    var cos4 = ((b-a)*(b-a) + c*c - d*d)/(2*(b-a)*c);
+    // compute R1
+    var cosPhi = (x * x - l2 * l2 - l3 * l3) / (-2.0 * l2 * l3);
+    cosPhi = Math.min(1.0, Math.max(-1.0, cosPhi));
+    var phi = Math.acos(cosPhi);
+    var beta = Math.asin(l2 * Math.sin(phi)/x);
+    var theta = Math.asin(l3 * Math.sin(phi)/x);
+    var x2Sqr = r*r + l3*l3 - 2*r*l3*Math.cos(beta);
+    var x2 = Math.sqrt(x2Sqr);
 
-    cos1 =  Math.min(1.0, Math.max(-1.0, cos1));
-    cos2 =  Math.min(1.0, Math.max(-1.0, cos2));
-    cos3 =  Math.min(1.0, Math.max(-1.0, cos3));
-    cos4 =  Math.min(1.0, Math.max(-1.0, cos4));
+    var test = abs(beta) + abs(theta) + abs(phi); // should sum to PI
 
-    var theta1 = Math.acos(cos1);
-    var theta2 = Math.acos(cos2);
-    var theta3 = Math.acos(cos3);
-    var theta4 = Math.acos(cos4);
+    var cosPhi2 = (l1 * l1 + l2 * l2 - x2 * x2) / (-2.0 * l2 * l1);
+    cosPhi2 = Math.min(1.0, Math.max(-1.0, cosPhi2));
+    var phi2 = Math.acos(cosPhi2);
+    var beta2 = Math.asin(l1 * Math.sin(phi2) / x2);
 
-    var test = theta1 + theta2 + (Math.PI - theta3) + (Math.PI - theta4);
-    console.log("test = "+test*Rad2Deg);
-
-    R0 = theta1 * Rad2Deg;
-    R1 = theta2 * Rad2Deg;
-    R2 = theta3 * Rad2Deg;
-    FK();
-
-    // handle angle constraints
-    // want 1st knuckle to bend more than 2nd knuckle
-    var sumAngles = R1 + R2;
-    R1 = Math.max(0, Math.min(90, 0.66 * sumAngles));
-    R2 = sumAngles - R1;
+    R1 = (-phi2 ) * Rad2Deg;
+    R2 = (2 * beta2 + phi - Math.PI) * Rad2Deg; 
     FK();
 
     // R0
@@ -121,11 +113,11 @@ function IK()
     FK();
     
     // test
-    FK();
-    var rDir = vec4.create();
-    console.log(vec4.distance(d3G, d1G) + " " + vec4.distance(goalPos, d1G)); // should be equal!
-    console.log(vec4.distance(d3G, d0) + " " + vec4.distance(goalPos, d0)); // should be equal!
-    console.log(R0+" "+R1+" "+R2);
+    //FK();
+    //var rDir = vec4.create();
+    //console.log(vec4.distance(d3G, d1G) + " " + vec4.distance(goalPos, d1G)); // should be equal!
+    //console.log(vec4.distance(d3G, d0) + " " + vec4.distance(goalPos, d0)); // should be equal!
+    //console.log(R0+" "+R1+" "+R2);
 }
 
 function FK()
