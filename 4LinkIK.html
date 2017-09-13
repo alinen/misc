@@ -84,27 +84,20 @@ function IK()
     var l1 = vec4.distance(d0, d1G);
     var l2 = vec4.distance(d1G, d2G);
     var l3 = vec4.distance(d2G, d3G);
-    var x = r - l1;
-    if (x < 0) return; // handle later
+    var x = (Math.abs(r - l1) + l2 + l3) * 0.5;
 
-    // compute R1
-    var cosPhi = (x * x - l2 * l2 - l3 * l3) / (-2.0 * l2 * l3);
-    cosPhi = Math.min(1.0, Math.max(-1.0, cosPhi));
-    var phi = Math.acos(cosPhi);
-    var beta = Math.asin(l2 * Math.sin(phi)/x);
-    var theta = Math.asin(l3 * Math.sin(phi)/x);
-    var x2Sqr = r*r + l3*l3 - 2*r*l3*Math.cos(beta);
-    var x2 = Math.sqrt(x2Sqr);
-
-    var test = abs(beta) + abs(theta) + abs(phi); // should sum to PI
-
-    var cosPhi2 = (l1 * l1 + l2 * l2 - x2 * x2) / (-2.0 * l2 * l1);
+    // compute R2
+    var cosPhi2 = (x*x - l2 * l2 - l3 * l3) / (-2.0 * l2 * l3);
     cosPhi2 = Math.min(1.0, Math.max(-1.0, cosPhi2));
     var phi2 = Math.acos(cosPhi2);
-    var beta2 = Math.asin(l1 * Math.sin(phi2) / x2);
+    var beta2 = Math.asin(l3 * Math.sin(phi2)/x);
 
-    R1 = (-phi2 ) * Rad2Deg;
-    R2 = (2 * beta2 + phi - Math.PI) * Rad2Deg; 
+    var cosPhi = (r*r - l1 * l1 - x*x) / (-2.0 * l1 * x);
+    cosPhi = Math.min(1.0, Math.max(-1.0, cosPhi));
+    var phi = Math.acos(cosPhi);
+
+    R2 = (Math.PI - phi2) * Rad2Deg;
+    R1 = (Math.PI - beta2 - phi) * Rad2Deg; 
     FK();
 
     // R0
