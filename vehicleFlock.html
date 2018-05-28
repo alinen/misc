@@ -194,12 +194,12 @@ function flocking(a) {
     var vdSeparation = separation(a);
     var vdAlignment = alignment(a);
 
-    var Kar = 0.5;
-    var Kco = 0.5;
-    var Kse = 2;
-    var Kal = 1;
-    var vdx = Kco * vdCohesion.x + Kse * vdSeparation.x +  Kal * vdAlignment.x;
-    var vdy = Kco * vdCohesion.y + Kse * vdSeparation.y +  Kal * vdAlignment.y;
+    var Kar = 10;
+    var Kco = 1.5;
+    var Kse = 0;
+    var Kal = 0.1;
+    var vdx = Kco * vdCohesion.x + Kse * vdSeparation.x +  Kal * vdAlignment.x + Kar * vdArrival.x;
+    var vdy = Kco * vdCohesion.y + Kse * vdSeparation.y +  Kal * vdAlignment.y + Kar * vdArrival.y;
 
     var vd = {x: vdx, y: vdy};
     return vd;
@@ -223,11 +223,15 @@ function leader(a) {
     vdArrival.y = vdArrival.y * (speed/mag);
 
     var vdSeparation = separation(a);
+    var vdAlignment = alignment(a);
+    var vdCohesion = alignment(a);
 
-    var Kar = 4;
-    var Kse = 5;
-    var vdx = Kse * vdSeparation.x +  Kar * vdArrival.x;
-    var vdy = Kse * vdSeparation.y +  Kar * vdArrival.y;
+    var Kar = 2;
+    var Kse = 6;
+    var Kal = 0;
+    var Kco = 0.5;
+    var vdx = Kse * vdSeparation.x +  Kar * vdArrival.x + Kal * vdAlignment.x + Kco * vdCohesion.x;
+    var vdy = Kse * vdSeparation.y +  Kar * vdArrival.y + Kal * vdAlignment.y + Kco * vdCohesion.y;
 
     var vd = {x: vdx, y: vdy};
     return vd;

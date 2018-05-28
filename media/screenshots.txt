@@ -1,5 +1,11 @@
 screenshots.txt
 hide
+1527550081-particleGhosts.thumbnail.gif
+1527549688-roseLineNoise3.thumbnail.png
+1527549548-roseLine0.9.thumbnail.png
+1527549469-roseLine1.thumbnail.png
+1527549157-roseLineNoise2.thumbnail.png
+1527538452-roseLineNoise.thumbnail.png
 1500259880-curiousSphere2.thumbnail.gif
 1500169407-curiousSphere1.thumbnail.gif
 1497987452-nightmareHands.thumbnail.gif

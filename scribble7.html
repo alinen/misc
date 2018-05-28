@@ -48,26 +48,21 @@ class Curve
    }
 }
 
-
-var img = null;
+var imgBird= null;
+var imgCircle= null;
 function preload()
 {
-   img = loadImage('assets/bird1.png');
+  imgBird= loadImage('assets/bird1.png');
+
+  var density = displayDensity();
+  imgCircle = createGraphics(100, 100);
+  imgCircle.pixelDensity(density);
+  imgCircle.background(0);
+  imgCircle.fill(255);
+  imgCircle.ellipse(50,50,40,40);
 }
 
-function stamp(pg, offsetx, offsety, stepx, stepy)
-{
-   var row = 0;
-   for (var i = offsety; i < height+stepy; i += stepy)
-   {
-      for (var j = offsetx; j < width+stepx; j += stepx)
-      {
-         image(pg, j, i);
-      }
-      row = row+1;
-   }
-}
-function makeTile()
+function makeTile(img)
 {
    curves = [];
    var numCurves = 300;
@@ -85,7 +80,7 @@ function makeTile()
    }
 
    var density = displayDensity();
-   pg = createGraphics(img.width, img.height);
+   var pg = createGraphics(img.width, img.height);
    pg.pixelDensity(density);  
    pg.noFill();
    for (var i = 0; i < curves.length; i++) 
@@ -108,42 +103,31 @@ function setup()
   pallet.push({r: 0, g: 60, b: 145}); // darker blue
 
   var density = displayDensity();
-  console.log(img.width+" "+img.height + " "+density);
-  pg1 = makeTile();
+  console.log(imgBird.width+" "+imgBird.height + " "+density);
+  pg1 = makeTile(imgBird);
+
+  pg2 = makeTile(imgCircle);
 
   imageMode(CENTER);
   createCanvas(width, height);
   background(0);
-  //blendMode(SCREEN);
-  //stamp(pg1, 0, 0, 100, 200)
   blendMode(SCREEN);
 }
 
-var lastX = -1;
-var lastY = -1;
-var threshold = 40;
+var lastKey = '';
 function draw()
 {
-  if (!keyIsPressed && key == '1')
+  if (key === '1' && key !== lastKey)
   {
       var density = pixelDensity();
-      image(pg, mouseX, mouseY, pg.width / density -1, pg.width / density -1);
+      image(pg1, mouseX, mouseY, pg1.width / density -1, pg1.width / density -1);
+      lastKey = key;
   }
-  /*
-   var d = 0;
-   if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height)
-   {
-      d = sqrt((lastX-mouseX)*(lastX-mouseX) + (lastY-mouseY)*(lastY-mouseY));
-   }
+}
 
-   if (d > threshold)
-   {
-      var density = pixelDensity();
-      image(pg, mouseX, mouseY, pg.width / density -1, pg.width / density -1);
-      lastX = mouseX;
-      lastY = mouseY;
-   }
-   */
+function keyReleased() 
+{
+  lastKey = '';
 }
 
 </script>

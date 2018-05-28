@@ -59,6 +59,15 @@ function followPath() {
     return seek();
 }
 
+function wander() {
+    vd = {x: -target.x+pos.x, y: -target.y+pos.y};
+    mag = Math.sqrt(vd.x*vd.x + vd.y*vd.y);
+    var speed = maxSpeed;
+    vd.x = vd.x * (speed/mag);
+    vd.y = vd.y * (speed/mag);
+    return vd;
+}
+
 function flee() {
     vd = {x: -target.x+pos.x, y: -target.y+pos.y};
     mag = Math.sqrt(vd.x*vd.x + vd.y*vd.y);
@@ -110,7 +119,7 @@ function getBehavior()
    var strUser = e.options[e.selectedIndex].value;
    if (strUser === "seek") return seek;
    if (strUser === "flee") return flee;
-   if (strUser === "path") return followPath;
+   if (strUser === "wander") return wander;
    return arrival;
 }
 
@@ -197,7 +206,7 @@ Inertia: <input id="Inertia" type="number" step="0.1" value="1"><br>
     <option value="arrival">Arrival</option>
     <option value="seek">Seek</option>
     <option value="flee">Flee</option>
-    <option value="path">Path</option>
+    <option value="wander">Wander</option>
 </select>
 <br>
 </body>
