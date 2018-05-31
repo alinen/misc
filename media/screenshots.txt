@@ -1,5 +1,9 @@
 screenshots.txt
 hide
+1527733185-roseClassic3.thumbnail.png
+1527733052-roseClassic2.thumbnail.png
+1527732721-roseClassic.thumbnail.png
+1527732253-roseLineParamVary.thumbnail.png
 1527648604-roseCurveTrace1.thumbnail.gif
 1527648192-roseColor3.thumbnail.png
 1527647464-roseColor2.thumbnail.png

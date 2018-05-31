@@ -14,6 +14,7 @@ function setup()
 
    background(255);
    blendMode(DIFFERENCE);
+   //blendMode(MULTIPLY);
 }
 
 
@@ -29,14 +30,18 @@ function draw()
   noStroke();
    //stroke(0);
 
+  var dt = 1.1;
   var factor = 0;
-   var k = 2;
+   var k = 4;
+   //var k = 2+noise(t*10);
    var n = 7;
    var x = 250 + (1-noise(t)*factor) * 200 * cos(k * t) * cos(n * t);
    var y = 250 + (1-noise(t)*factor) * 200 * cos(k * t) * sin(n * t);
+   var x2 = 250 + (1-noise(t+dt)*factor) * 200 * cos(k * (t+dt)) * cos(n * (t+dt));
+   var y2 = 250 + (1-noise(t+dt)*factor) * 200 * cos(k * (t+dt)) * sin(n * (t+dt));
    //fill(t % 55 + 200)
-   //stroke(noise(t)*30, 0, (1-noise(t))*40);
-   stroke(noise(t)*30, 10, (1-noise(t))*40);
+   stroke(noise(t)*30, (1-noise(t))*40, 0);
+   //stroke(noise(t)*30, 10, (1-noise(t))*40);
    //stroke(220);
    //stroke(200 + noise(x)*55);
    //ellipse(x,y, 10, 10);
@@ -45,8 +50,9 @@ function draw()
    //triangle(x,y, x, y+100, x+100, y);
    //triangle(x,y, x, x+noise(x), x+random(2,100)*noise(y), y+10);
    //triangle(x,y, x, y+noise(x), y, x+noise(y));
-   //line(x, y, y, x);
-   line(x,y, y*noise(t), x*noise(t));
+   //line(x, y, x+50, y+50);
+   line(x,y, x2, y2);
+   //line(x,y, y*noise(t), x*noise(t));
    //line(x,y, y+noise(t)*100, x+noise(t)*100);
    //translate(x, y);
    //rotate(noise(x)*180);
@@ -54,7 +60,6 @@ function draw()
    //var scaley = random(10,200);
    //line(-noise(x)*scalex, 0, noise(y)*scaley, 0);
    t += 0.001;
-   //t += 1;
 }
 
 // Diamond square algorithm?
