@@ -1,0 +1,72 @@
+<html>
+<head>
+<title>Drawing rose curves</title>
+<link rel="stylesheet" type="text/css" href="tips-tricks.css">
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+</head>
+<body>
+<h1>Rose curves</h1>
+
+<p>What are rose curves like? Like putting a pen at the end of a wheel and spinning it to draw a circle. 
+However, a wheel has a fixed distance between the center spoke and the wheel's edge but for a rose 
+curve we change the diameter in an oscillating way.
+
+<p>Mathmatically, roses are a family of curves defined as 
+
+\[
+x = cos() cos()
+y = cos() sin()
+\]
+
+where n and k...
+
+<p>The rose equation is a variation on a circle. If I wanted to draw a circle, I would use the following
+equation
+\[
+x = r cos(\theta)
+y = r sin(\theta)
+\]
+
+where r is the radius. 
+<hr>
+
+<p>Because these curves are based on oscillating terms, they produce lovely circular patterns (repetitive patterns). 
+Below are the results of various experiments made with processing.
+
+<h3>Rendering style #1: Diagonal draw</h3>
+
+<p>This style is based on drawing tight lines across a diagonal. The position along the line is determined by our 
+rose equation. 
+
+<p>Here is the result of a lines with a fixed length. By rendering the lines with a lighter grey and multiplying them 
+against the current canvas color, we can bring out the details when the curves double backs on itself.
+
+<p>Show params and pictures
+
+<p>Here is another look using ADD and a dark background
+
+<h2>Varying line lengths</h2>
+
+<p>Perlin noise implements noise which varies smoothly based on the input. So if I call noise with two points near each 
+other the generated noise values will also be close. Basically, perlin noise is prettier than uniform noise. 
+
+<p>Below are results where we vary the line lengths based on Perlin noise.
+
+<h2>Varying the equation #1</h2>
+
+<p>Below we change the equation like so
+
+<h2>Varying between two equations</h2>
+
+<h2>Varying the color</h2>
+
+<h2>Animating between curves</h2>
+
+<h3>Rendering style #2: Church window</h3>
+
+<h3>Rendering style #3: Prickly thicket</h3>
+
+</body>
+</html>
+

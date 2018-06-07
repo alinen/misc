@@ -1,0 +1,180 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+function compute(n, k, t)
+{
+   var x = 250 + 200 * Math.cos(k * t) * Math.cos(n * t);
+   var y = 250 + 200 * Math.cos(k * t) * Math.sin(n * t);
+   return {x:x,y:y};
+}
+
+class Rose
+{
+  constructor(n, k, numPoints)
+  {
+    this.n = n;
+    this.k = k;
+    this.points = []
+    var theta = 0;
+    for (var i = 0; i < numPoints; i++)
+    {
+      var pt = compute(n, k, i*0.01);
+      this.points.push(pt);
+    }
+  }
+}
+
+var stop = false;
+var t = 0;
+var numSamples = 10;
+var numPoints = 1000;
+var roses = [];
+var xx = 0;
+var yy = 0;
+
+function setup() 
+{
+   var width = 500.0;
+   var height = 500.0;
+
+   createCanvas(width, height);
+   console.log("TEST");
+
+   for (var i = 0; i < numSamples; i++)
+   {
+     roses.push([]);
+     for (var j = 0; j < numSamples; j++)
+     {
+       roses[i].push(new Rose(i+1, j+1, numPoints));
+     }
+   }
+
+   background(255);
+   //blendMode(BLEND);
+   //blendMode(DIFFERENCE);
+   //blendMode(MULTIPLY);
+}
+
+function mousePressed()
+{
+    if (mouseButton === LEFT) stop = !stop;
+}
+
+function mouseMoved()
+{
+  xx = mouseX;
+  yy = mouseY;
+}
+
+function keyReleased()
+{
+
+}
+
+function LERP(p1, p2, alpha)
+{
+  var x = p1.x * (1-alpha) + p2.x * alpha;
+  var y = p1.y * (1-alpha) + p2.y * alpha;
+  return {x:x,y:y};
+}
+
+function BILERP(p1, p2, p3, p4, alphax, alphay)
+{
+  var x1 = p1.x * (1-alphax) + p2.x * alphax;
+  var y1 = p1.y * (1-alphax) + p2.y * alphax;
+  var x2 = p3.x * (1-alphax) + p4.x * alphax;
+  var y2 = p3.y * (1-alphax) + p4.y * alphax;
+  var x = x1 * (1-alphay) + x2 * alphay;
+  var y = y1 * (1-alphay) + y2 * alphay;
+  return {x:x,y:y};
+}
+
+function draw() 
+{
+  background(255)
+  if (keyIsDown(LEFT_ARROW))
+  {
+    xx = Math.max(0,xx-0.5);
+  }
+  else if (keyIsDown(RIGHT_ARROW))
+  {
+    xx = Math.min(500, xx+0.5);
+  }
+  if (keyIsDown(UP_ARROW))
+  {
+    yy = Math.min(500, yy+0.5);
+  }
+  else if (keyIsDown(DOWN_ARROW))
+  {
+    yy = Math.max(0,yy-0.5);
+  }
+
+  textSize(18);
+  stroke(0);
+  strokeWeight(2);
+  var alphax = (numSamples-1) * Math.max(Math.min(1.0, float(xx)/500), 0.0);
+  var alphay = (numSamples-1) * Math.max(Math.min(1.0, float(yy)/500), 0.0);
+  text('n '+alphax.toPrecision(4), 5, 20);
+  text('k '+alphay.toPrecision(4), 5, 40);
+  
+  var ix = Math.floor(alphax);
+  var jy = Math.floor(alphay);
+  var fracx = alphax - ix;
+  var fracy = alphay - jy;
+
+  var nexti = (ix + 1) % numSamples; 
+  var nextj = (jy + 1) % numSamples; 
+  var last = BILERP(roses[ix][jy].points[0], roses[nexti][jy].points[0], 
+                    roses[ix][nextj].points[0], roses[nexti][nextj].points[0], fracx, fracy);
+  //console.log(alphax+" "+ix+" "+fracx+" "+nexti+" ");
+  for (var i = 1; i < numPoints; i++)
+  {
+    var r = (100+noise(i))%255;
+    var g = i%255;
+    var b = 100;
+    //stroke(r,g,b);
+    stroke(0);
+
+    var gray = 1-i*1.0/numPoints;
+    stroke(gray*255);
+    fill(gray*255);
+    //fill(gray*r, gray*g, gray*b);
+    var p = BILERP(roses[ix][jy].points[i], roses[nexti][jy].points[i], 
+                      roses[ix][nextj].points[i], roses[nexti][nextj].points[i], fracx, fracy);
+    //strokeWeight(20*gray+2);
+    line(last.x, last.y, p.x,p.y);
+    //line(p.x,p.y, p.y, p.x);
+    //ellipse(p.x,p.y, 20, 5);
+    //var r = 50*gray;
+    //ellipse(p.x-r*0.5,p.y-r*0.5, r, r);
+    //ellipse(p.x,p.y, 50*noise(i)+5, 50*noise(i)+5);
+    //ellipse(p.x,p.y, 50*gray+5, 50*gray+5);
+    last = p;
+  }
+  /*
+  var k = 9; //Math.max(1, (xx*20.0)/canvas.width);
+  var n = 1; //Math.max(1, (yy*20.0)/canvas.height);
+  
+  var angle = 2*Math.PI/5.0/n;
+  //console.log(t);
+  for (var i = 0; i < 5; i++)
+  {
+    p = compute(n, k, t+angle*i);
+    fill(noise(i)*30, (1-noise(i))*40, 0);
+    ellipse(p.x,p.y, 10, 10);
+  }
+  t += 0.001;
+  if (t > 2*Math.PI/n/5) stop = true;
+  */
+}
+
+// Diamond square algorithm?
+// mewo2.com
+
+</script>
+<body>
+</body>
+</html>
+
+

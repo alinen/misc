@@ -1,0 +1,39 @@
+body {
+   position: relative;
+   color: #222222;
+   background-color: #ffffff; 
+   margin: 0em auto;
+   max-width: 90vw;
+   font-family: Helvetica, Arial, sans-serif;
+   font-size: 12; 
+   padding: 0em;
+   text-align: left;
+}
+
+hr {
+   background-color: #000000; 
+   border-style: none;
+   border-width: 0px;
+   padding: 0em;
+   height: 2px;   
+   }
+
+p,ul {
+   font-size: 10pt;
+   font-weight: normal;
+   line-height: 1.25em;   
+   font-family: Helvetica, Arial, sans-serif;
+}
+
+a:link {
+  color: rgb(100,100,100);
+}
+
+a:visited {
+  color: rgb(50,50,50);
+}
+
+h1,h2,h3,h4,h5,h6 {
+   margin: 0.0em;
+}
+
