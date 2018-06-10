@@ -2,11 +2,11 @@
 
 Random ideas and tests, mostly implemented in p5js. 
 
-media/1528381656-roseExplore1.thumbnail.gif
-media/1527733185-roseClassic3.thumbnail.png
-media/1527733052-roseClassic2.thumbnail.png
-media/1527732721-roseClassic.thumbnail.png
-media/1527732253-roseLineParamVary.thumbnail.png
+!(https://github.com/alinen/misc/blob/master/media/1480617771-mouseFollow1.thumbnail.gif)
+!(https://github.com/alinen/misc/blob/master/media/1527733185-roseClassic3.thumbnail.png)
+!(https://github.com/alinen/misc/blob/master/media/1527733052-roseClassic2.thumbnail.png)
+!(https://github.com/alinen/misc/blob/master/media/1527732721-roseClassic.thumbnail.png)
+!(https://github.com/alinen/misc/blob/master/media/1527732253-roseLineParamVary.thumbnail.png)
 media/1527648604-roseCurveTrace1.thumbnail.gif
 media/1527648192-roseColor3.thumbnail.png
 media/1527647464-roseColor2.thumbnail.png
