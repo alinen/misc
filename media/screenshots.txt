@@ -1,5 +1,7 @@
 screenshots.txt
 hide
+1528469787-fire.thumbnail.gif
+1528469686-smoke.thumbnail.gif
 1528381656-roseExplore1.thumbnail.gif
 1527733185-roseClassic3.thumbnail.png
 1527733052-roseClassic2.thumbnail.png
