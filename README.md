@@ -2,7 +2,6 @@
 
 Random ideas and tests, mostly implemented in p5js. 
 
-![](https://github.com/alinen/misc/blob/master/media/1480617771-mouseFollow1.thumbnail.gif)
 ![](https://github.com/alinen/misc/blob/master/media/1527733185-roseClassic3.thumbnail.png)
 ![](https://github.com/alinen/misc/blob/master/media/1527733052-roseClassic2.thumbnail.png)
 ![](https://github.com/alinen/misc/blob/master/media/1527732721-roseClassic.thumbnail.png)
@@ -140,14 +139,8 @@ Random ideas and tests, mostly implemented in p5js.
 ![](https://github.com/alinen/misc/blob/master/media/1481502880-glow3.thumbnail.png)
 ![](https://github.com/alinen/misc/blob/master/media/1481502847-glow2.thumbnail.png)
 ![](https://github.com/alinen/misc/blob/master/media/1481502803-glow1.thumbnail.png)
-![](https://github.com/alinen/misc/blob/master/media/1481121741-scribble2.thumbnail.gif)
-![](https://github.com/alinen/misc/blob/master/media/1481061197-scribble.thumbnail.gif)
-![](https://github.com/alinen/misc/blob/master/media/1481061121-staticScribble3.thumbnail.png)
-![](https://github.com/alinen/misc/blob/master/media/1481061096-staticScribble2.thumbnail.png)
-![](https://github.com/alinen/misc/blob/master/media/1481061056-staticScribble.thumbnail.png)
 ![](https://github.com/alinen/misc/blob/master/media/1480989477-fieldworm.thumbnail.gif)
 ![](https://github.com/alinen/misc/blob/master/media/1480898927-sph.thumbnail.gif)
-![](https://github.com/alinen/misc/blob/master/media/1480617771-mouseFollow1.thumbnail.gif)
 
 # notes
 
