@@ -144,4 +144,4 @@ Random ideas and tests, mostly implemented in p5js.
 
 # notes
 
-
+![Roses](https://alinen.github.io/misc/notes/roses.html)
