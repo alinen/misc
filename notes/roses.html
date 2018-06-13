@@ -3,38 +3,76 @@
 <title>Rose notes</title>
 <link rel="stylesheet" type="text/css" href="./notes.css">
 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<script language="javascript" type="text/javascript" src="../p5.min.js"></script>
+<script language="javascript" type="text/javascript" src="../p5.dom.js"></script>
+<script type="text/javascript" async
+	 src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<script>
+function endnote() {
+  let d = new Date();
+  document.getElementById("footer").innerHTML = "&copy; alinen 2016 Last updated "+ d.toDateString();
+}
+/*
+var roseblend = function (p) {
+  p.setup = function () {
+    var canvas = p.createCanvas(600, 400);
+    canvas.parent('squareWorld');
+  };
 
+  p.draw = function () {
+    p.background(200);
+    p.rect(p.width/2-100, p.height/2-100, 200, 200);
+  };
+
+  p.mousePressed = function () {
+    // noop
+  };
+};
+
+new p5(roseblend);
+*/
+</script>
 </head>
-<body>
+<body onload="endnote()">
 <h1>Rose curves</h1>
 
 <p>What are rose curves like? Like putting a pen at the end of a wheel and spinning it to draw a circle. 
 However, a wheel has a fixed distance between the center spoke and the wheel's edge but for a rose 
 curve we change the diameter in an oscillating way.
 
-<p>Mathmatically, roses are a family of curves defined as 
+<p>For the following images, the roses are defined as 
 
 \[
-x = cos() cos()
-y = cos() sin()
+x = \cos(k \theta) \cos(n \theta) \\
+y = \cos(k \theta) \sin(n \theta)
 \]
 
-where n and k...
+where n is the speed at which we move around in a circle and k controls how the
+radius changes as a function of \( \theta \).
 
 <p>The rose equation is a variation on a circle. If I wanted to draw a circle, I would use the following
 equation
 \[
-x = r cos(\theta)
-y = r sin(\theta)
+x = r \cos(\theta) \\
+y = r \sin(\theta)
 \]
 
 where r is the radius. 
-<hr>
 
 <p>Because these curves are based on oscillating terms, they produce lovely circular patterns (repetitive patterns). 
 Below are the results of various experiments made with processing.
 
+<!--<div id="roseblend"></div>-->
+<center>
+<iframe src="../rose2.html" width=500 height=500 scrolling="no"></iframe> 
+</center>
+
+
+
+<hr>
 <h3>Rendering style #1: Diagonal draw</h3>
+<hr>
 
 <p>This style is based on drawing tight lines across a diagonal. The position along the line is determined by our 
 rose equation. 
@@ -67,6 +105,10 @@ other the generated noise values will also be close. Basically, perlin noise is 
 
 <h3>Rendering style #3: Prickly thicket</h3>
 
+<hr>
+<div id="footer" style="font-size: 8pt; color: rgb(119, 119, 119);text-align:right;">
+</div>
+<br>
 </body>
 </html>
 

@@ -1,5 +1,6 @@
 <html>
 <script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript" src="p5.dom.js"></script>
 <script language="javascript" type="text/javascript">
 
 function compute(n, k, t)
@@ -63,8 +64,8 @@ function mousePressed()
 
 function mouseMoved()
 {
-  xx = mouseX;
-  yy = mouseY;
+  //xx = mouseX;
+  //yy = mouseY;
 }
 
 function keyReleased()
@@ -93,6 +94,9 @@ function BILERP(p1, p2, p3, p4, alphax, alphay)
 function draw() 
 {
   background(255)
+  xx = document.getElementById('n').value;
+  yy = document.getElementById('k').value;
+
   if (keyIsDown(LEFT_ARROW))
   {
     xx = Math.max(0,xx-0.5);
@@ -174,6 +178,8 @@ function draw()
 
 </script>
 <body>
+<label for="points">n:</label> <input type="range" name="points" id="n" value="250" min="0" max="500">
+<label for="points">k:</label> <input type="range" name="points" id="k" value="250" min="0" max="500">
 </body>
 </html>
 
