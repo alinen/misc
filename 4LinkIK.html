@@ -84,7 +84,8 @@ function IK()
     var l1 = vec4.distance(d0, d1G);
     var l2 = vec4.distance(d1G, d2G);
     var l3 = vec4.distance(d2G, d3G);
-    var x = (Math.abs(r - l1) + l2 + l3) * 0.5;
+    var alpha = 0.9;
+    var x = Math.abs(r - l1)*(1-alpha) + (l2 + l3) * alpha;
 
     // compute R2
     var cosPhi2 = (x*x - l2 * l2 - l3 * l3) / (-2.0 * l2 * l3);
