@@ -1,0 +1,64 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+function setup() 
+{
+   var width = 500.0;
+   var height = 500.0;
+
+   createCanvas(width, height);
+   console.log("TEST");
+   background(240);
+}
+
+function draw() 
+{
+  stroke(255);
+
+  if (keyCode == 49)
+  {
+    fill(100 + random(-50,50), 0, 0);
+  }
+  else if (keyCode == 50)
+  {
+    fill(0, 100 + random(-50,50), 0);
+  }
+  else if (keyCode == 51)
+  {
+    fill(0, 0, 100 + random(-50,50));
+  }
+  else if (keyCode == 51)
+  {
+    fill(100 + random(-50,50), 0, 100 + random(-50,50));
+  }
+  else if (keyCode == 52)
+  {
+    fill(0, 100 + random(-50,50), 100 + random(-50,50));
+  }
+  else if (keyCode == 53)
+  {
+    fill(200 + random(-50,50), 200 + random(-50,50), 0);
+  }
+  else if (keyCode == 54)
+  {
+    fill(200 + random(-50,50), 200 + random(-50,50), 200 + random(-50,50));
+  }
+  else if (keyCode == 55)
+  {
+    fill(50 + random(-50,50), 50 + random(-50,50), 50 + random(-50,50));
+  }
+  ellipse(50,50, 30, 30);
+
+  if (mouseIsPressed)
+  {
+    ellipse(mouseX,mouseY, random(5,25), random(5,25));
+  }
+}
+
+</script>
+<body>
+</body>
+</html>
+
+
