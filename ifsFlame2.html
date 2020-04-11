@@ -1,0 +1,85 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+// linear fractal flames
+var numIterations = 0;
+var particles = [];
+var paused = false;
+var a = 0.0;
+var b = 0.0;
+var c = 0.0;
+var d = 0.0;
+var e = 0.0;
+var f = 0.0;
+
+function setup() 
+{
+   var width = 500.0;
+   var height = 500.0;
+   createCanvas(width, height);
+   background(0);
+   fill(50, 25, 0);
+   noStroke();
+   for (var i = 0; i < 100; i++)
+   {
+      var x = random()*2.0 - 1.0;
+      var y = random()*2.0 - 1.0;
+      particles.push({x:x,y:y});
+   }
+   blendMode(ADD);
+
+   var theta = random() * 3.14;
+   var aa = random();
+   var bb = random();
+   var dd = random();
+   var ee = random();
+   a = aa*cos(theta);
+   b = -dd*sin(theta);
+   c = random()*2.0-1.0;
+   d = sin(theta);
+   e = bb*cos(theta);
+   f = random()*2.0-1.0;
+   console.log("a: "+a);
+   console.log("b: "+b);
+   console.log("c: "+c);
+   console.log("d: "+d);
+   console.log("e: "+e);
+   console.log("f: "+f);
+}
+
+function mouseClicked()
+{
+   paused = !paused;
+}
+
+function draw() 
+{
+   if (paused) return;
+
+   for (var k = 0; k < 10; k++)
+   {
+      particles.forEach(function (p) {
+         if (numIterations > 20) 
+         {
+            var x = min(max(-1, a*p.x + b*p.y + c), 1.0);
+            var y = min(max(-1, d*p.x + e*p.y + f), 1.0);
+            p.x = x;
+            p.y = y;
+            var px = (width/2)*(p.x + 1);
+            var py = (height/2)*(p.y + 1);
+            ellipse(px, py, 5);
+            //console.log(p.x+" "+p.y+" "+px+" "+py);
+         }
+
+      });
+      numIterations++;
+   }
+}
+
+</script>
+<body>
+</body>
+</html>
+
+

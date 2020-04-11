@@ -1,5 +1,9 @@
 screenshots.txt
 hide
+1586389955-plantTest.thumbnail.png
+1586389659-octomistake.thumbnail.png
+1584206879-tinybattles.thumbnail.gif
+1558036989-StillLife.thumbnail.png
 1528381656-roseExplore1.thumbnail.gif
 1527733185-roseClassic3.thumbnail.png
 1527733052-roseClassic2.thumbnail.png

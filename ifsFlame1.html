@@ -1,0 +1,72 @@
+<html>
+<script language="javascript" type="text/javascript" src="p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var numIterations = 0;
+var particles = [];
+var paused = false;
+function setup() 
+{
+   var width = 500.0;
+   var height = 500.0;
+   createCanvas(width, height);
+   background(0);
+   fill(10, 5, 0);
+   noStroke();
+   for (var i = 0; i < 10; i++)
+   {
+      var x = random();
+      var y = random();
+      particles.push({x:x,y:y});
+      console.log(x+" "+y);
+   }
+   blendMode(ADD);
+}
+
+function mouseClicked()
+{
+   paused = !paused;
+}
+
+function draw() 
+{
+   if (paused) return;
+
+   for (var k = 0; k < 10; k++)
+   {
+      particles.forEach(function (p) {
+         var i = floor(abs(random())*3);
+         if (i === 0)
+         {
+            p.x = p.x * 0.5;
+            p.y = p.y * 0.5;
+         } 
+         else if (i === 1)
+         {
+            p.x = (p.x+1) * 0.5;
+            p.y = p.y * 0.5;
+         }
+         else if (i === 2)
+         {
+            p.y = (p.y+1) * 0.5;
+            p.x = p.x * 0.5;
+         }
+         if (numIterations > 20) 
+         {
+            var px = (width)*(p.x);
+            var py = (height)*(p.y);
+            ellipse(px, py, 2);
+            //console.log(px+" "+py);
+         }
+
+      });
+      numIterations++;
+   }
+}
+
+</script>
+<body>
+</body>
+</html>
+
+
