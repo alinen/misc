@@ -44,6 +44,7 @@ echo "CREATE SCREENSHOT LIST"
 
 echo "# miscellaneous demos" > README.md
 echo "Random ideas and tests, mostly implemented in p5js." >> README.md
+echo "" >> README.md
 for f in `ls media/*.png media/*.gif`
 do
    echo "![](https://github.com/alinen/misc/blob/master/$f)" >> README.md
