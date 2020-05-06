@@ -151,3 +151,8 @@ Random ideas and tests, mostly implemented in p5js.
 ![](https://github.com/alinen/misc/blob/master/media/1584206879-tinybattles.thumbnail.gif)
 ![](https://github.com/alinen/misc/blob/master/media/1586389659-octomistake.thumbnail.png)
 ![](https://github.com/alinen/misc/blob/master/media/1586389955-plantTest.thumbnail.png)
+![](https://github.com/alinen/misc/blob/master/media/1586874306-lillymistake.thumbnail.gif)
+![](https://github.com/alinen/misc/blob/master/media/1587419050-eldermistake.thumbnail.gif)
+![](https://github.com/alinen/misc/blob/master/media/1588022973-neko-screenshot.thumbnail.png)
+![](https://github.com/alinen/misc/blob/master/media/1588191875-elders.thumbnail.png)
+![](https://github.com/alinen/misc/blob/master/media/1588191973-elders.thumbnail.gif)
