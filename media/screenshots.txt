@@ -1,5 +1,10 @@
 screenshots.txt
 hide
+1588191973-elders.thumbnail.gif
+1588191875-elders.thumbnail.png
+1588022973-neko-screenshot.thumbnail.png
+1587419050-eldermistake.thumbnail.gif
+1586874306-lillymistake.thumbnail.gif
 1586389955-plantTest.thumbnail.png
 1586389659-octomistake.thumbnail.png
 1584206879-tinybattles.thumbnail.gif
