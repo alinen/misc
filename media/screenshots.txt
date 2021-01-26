@@ -1,5 +1,8 @@
 screenshots.txt
 hide
+1610850932-teddy3.thumbnail.png
+1609298385-donut-final.thumbnail.png
+1589555837-blueFlower.thumbnail.png
 1588191973-elders.thumbnail.gif
 1588191875-elders.thumbnail.png
 1588022973-neko-screenshot.thumbnail.png

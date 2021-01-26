@@ -156,3 +156,6 @@ Random ideas and tests, mostly implemented in p5js.
 ![](https://github.com/alinen/misc/blob/master/media/1588022973-neko-screenshot.thumbnail.png)
 ![](https://github.com/alinen/misc/blob/master/media/1588191875-elders.thumbnail.png)
 ![](https://github.com/alinen/misc/blob/master/media/1588191973-elders.thumbnail.gif)
+![](https://github.com/alinen/misc/blob/master/media/1589555837-blueFlower.thumbnail.png)
+![](https://github.com/alinen/misc/blob/master/media/1609298385-donut-final.thumbnail.png)
+![](https://github.com/alinen/misc/blob/master/media/1610850932-teddy3.thumbnail.png)
