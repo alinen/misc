@@ -1,0 +1,80 @@
+<html>
+<script language="javascript" type="text/javascript" src="https://github.com/processing/p5.js/releases/download/1.2.0/p5.min.js"></script>
+<script language="javascript" type="text/javascript">
+
+var w = 1000.0;
+var h = 1000.0;
+var spacing = 100;
+var pegSize = 50;
+var rotateRate = 0.05; // radians
+var half = 0; 
+var numPegs = 0;
+var selected = {i: 0, j: 0, theta: 0}; 
+
+function setup() {
+  createCanvas(w, h);
+  half = spacing * 0.5;
+  numPegs = floor(w / spacing);
+  //console.log("TEST");
+}
+
+function draw() {
+  background("#fff8dc");
+
+  // draw pegs
+  noStroke();
+  rectMode(CENTER);
+  for (var i = 0; i < numPegs; i++) {
+    for (var j = 0; j < numPegs; j++) {
+      var x = half + spacing * i; 
+      var y = half + spacing * j; 
+
+      fill("#bc8f8f");
+      // ellipse(x, y, 10, 10); // circle peg
+      if (i == selected.i && j == selected.j) {
+        push();
+        translate(x, y);
+        rotate(selected.theta);
+        rect(0, 0, pegSize, pegSize, 5, 5, 5, 5); // roundRect
+        pop();
+        selected.theta += rotateRate;
+        if (selected.theta >= HALF_PI) {
+           selected.i = -1;
+           selected.j = -1;
+        }
+      }
+      else {
+         rect(x, y, pegSize, pegSize, 5, 5, 5, 5); // roundRect
+      }
+    }
+  }
+
+  // draw timer
+  fill(0);
+  stroke(0);
+  var seconds = millis()/1000.0;
+  text(seconds.toFixed(1) + " s", 5, 15);
+}
+
+function mouseClicked() {
+  if (selected.i != -1) return; // only allow a single click
+
+  var celli = mouseX % spacing;
+  var cellj = mouseY % spacing;
+  //console.log("here "+mouseX+" "+mouseY+" "+celli+" "+cellj);
+
+  if (dist(celli, cellj, half, half) < pegSize/2) {
+    selected.i = floor(mouseX / spacing);
+    selected.j = floor(mouseY / spacing);
+    selected.theta = 0;
+  }
+
+
+}
+
+</script>
+<body>
+</body>
+</html>
+
+
